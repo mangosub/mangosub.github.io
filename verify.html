@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Generate</title>
+	<link rel="stylesheet" href="attributes.css">
+	<script type="text/javascript" src = "input_to_sub.js"></script>
+	<script type ="text/javascript" src="jquery.js"></script>
+  	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  	<script type="text/javascript" src = "functions.js"></script>
+</head>
+<body>
+<div class = "type_div">
+	<div class="video_div">
+		<div id="slider-range"></div>
+		<h1 class="header_name">House Of Cards S05E02</h1>
+
+		<div class="video_sub" >
+			<video class = "video_style" controls>
+				<source src="videos/you_are_nothing.mp4" type="video/mp4">
+			Your browser does not support the video tag.
+			</video>
+			<h1 class="sub_text" id = "sub_text_generate">You text will appear here</h1>
+		</div>
+		
+		<div class="slider">
+			  	
+			<img class = "slider_image" id="start_slider" src="images/start.png">
+			<img class = "slider_image" id="end_slider" src="images/end.png">
+		</div>
+		<div>
+			<h1 style="font-size: 12px; position: relative; right: 120px">Select the most correct line that corresponds to the videos section.</h1>
+		</div>
+		<div class="sub_show">
+			<input type="text" style = "width: 625px"  class="sub_text_input" id="sub_text_input_generate_1" readonly value="Something is gonna happen">
+			<img id="tick_1" src="images/check_unselected.png" style= 'width : 30px; height: 30px; margin-left: 25px' onclick='select_subs("1")'></img>
+		</div>
+
+		<div class="sub_show">
+			<input type="text"  style = "width: 625px" class="sub_text_input" id="sub_text_input_generate_2" readonly value="Something will happen soon">
+			<img id="tick_2" src="images/check_unselected.png" style= 'width : 30px; height: 30px; margin-left: 25px' onclick='select_subs("2")'></img>
+		</div>
+
+		<div class="sub_show">
+			<input type="text" style = "width: 625px" class="sub_text_input" id="sub_text_input_generate_3" readonly value = "Something is going to happen">
+			<img id="tick_3" src="images/check_unselected.png" style= 'width : 30px; height: 30px; margin-left: 25px' onclick='select_subs("3")'></img>
+		</div>
+		<div class = "div_buttons">
+			<a href="generate_info.html"><button class="norm_buttons" style="margin-right: 50px">Home</button></a>
+			<a href="generate_info.html"><button class="norm_buttons" style="margin-left: 50px">Submit</button></a>
+		</div>
+	</div>
+</div></body>
+</html>
