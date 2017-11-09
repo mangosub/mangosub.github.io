@@ -1,0 +1,26 @@
+.side {
+    height: 100%;
+    width: 420px;
+    background-color: #f3f3f3;
+    position: fixed!important;
+    overflow: auto;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+}
+
+.noscroll::-webkit-scrollbar {
+  display: none;
+}
+
+table.leaderboard td {
+    padding: 8px;
+}
+
+table.leaderboard td:first-child {
+    width: 52px;
+    text-align: right;
+}
+
+table.leaderboard td:nth-child(2) {
+    width: 180px;
+    padding-left: 16px;
+}
