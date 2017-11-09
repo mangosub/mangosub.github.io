@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<style>
+form {
+    border: 3px solid #f1f1f1;
+}
+
+.submitbtn{
+  background-color: #f44336;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 300px;
+}
+
+button:hover {
+    opacity: 0.8;
+}
+.congrats{
+  font:25;
+}
+.workmorebtn{
+  background-color: #f44336;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 150px;
+}
+.homebtn{
+  background-color: #f44336;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 150px;
+}
+.facebookbtn {
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: auto;
+    background-color: #3b5998;
+    width: 100px;
+}
+.naverbtn {
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: auto;
+    background-color: #3EAF0E;
+    width: 100px;
+}
+
+.container {
+    padding: 16px;
+}
+
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    padding-top: 60px;
+}
+
+/* Modal Content/Box */
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
+    border: 1px solid #888;
+    width: 350px; /* Could be more or less, depending on screen size */
+    text-align: center;
+}
+
+/* The Close Button (x) */
+.close {
+    position: absolute;
+    right: 25px;
+    top: 0;
+    color: #000;
+    font-size: 35px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: red;
+    cursor: pointer;
+}
+
+/* Add Zoom Animation */
+.animate {
+    -webkit-animation: animatezoom 0.6s;
+    animation: animatezoom 0.6s
+}
+
+@-webkit-keyframes animatezoom {
+    from {-webkit-transform: scale(0)} 
+    to {-webkit-transform: scale(1)}
+}
+    
+@keyframes animatezoom {
+    from {transform: scale(0)} 
+    to {transform: scale(1)}
+}
+</style>
+
+<body>
+
+<h2 style = "text-align: center;">Generate</h2>
+<button onclick="document.getElementById('id01').style.display='block'" class="submitbtn">Submit</button>
+
+<div id = "id01" class = "modal">
+  <form class="modal-content animate" action="http://mangosub.com/profile_page">
+    <div class = "container" style = "text-align: center">
+      <p><font size = "15">Congratulations!</font></p>
+      <p><font size = "5">You earned +5 credits!</font></p>
+      <button onclick="location.href='http://www.mangosub.com/work'" type = "button" class = "workmorebtn">Work more</button>
+      <button onclick="location.href='http://www.mangosub.com'" type = "button" class = "homebtn">Home</button>
+    </div>
+
+    <div class = "container" style = "background-color:#f1f1f1; text-align: center">
+      <p><font size = "5">Share your results</font></p>
+      <button type = "button" onclick="location.href='http://www.facebook.com'" class = "facebookbtn">Facebook</button>
+      <button type = "button" onclick="location.href='http://www.naver.com'" class = "naverbtn">Naver</button>
+    </div>
+  </form>
+</div>
+<script>
+  var modal = document.getElementById('id01');
+  // When the user clicks anywhere outside of the modal, close it
+  window.onclick = function(event) {
+      if (event.target == modal) {
+          window.location.href = 'http://www.mangosub.com';
+      }
+  }
+</script>
+
+</body>
+</html>
