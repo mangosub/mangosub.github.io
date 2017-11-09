@@ -6,15 +6,24 @@
 	<link rel="stylesheet" type="text/css" href="nav.css">
 	<link rel="stylesheet" type="text/css" href="profile.css">
 </head>
+<script>
+  var modal = document.getElementById('id01');
+  // When the user clicks anywhere outside of the modal, close it
+  window.onclick = function(event) {
+      if (event.target == modal) {
+          modal.style.display = "none";
+      }
+  }
+</script>
 <body>
 	<ul class="nav">
 		<li class="logo"><a href="index.html">LOGO bitch</a></li>
 		<li><a class="placeholder"></a></li>
 		<li><a>$420</a></li>
 		<li><a class="placeholder"></a></li>
-		<li><a href="" class="hov">LOGOUT</a></li>
+		<li><a href="login_popup.html" class="hov" onclick="document.getElementById('id01').style.display='block'" >LOGIN</a></li>
 		<li><a href="profile.html" class="hov">PROFILE</a></li>
-		<li><a href="generate_info.html" class="hov">WORK</a></li>
+		<li><a href="work.html" class="hov">WORK</a></li>
 		<li><a href="request.html" class="hov">REQUEST</a></li>
 		<li><a href="index.html" class="hov active">ABOUT</a></li>
 	</ul>
