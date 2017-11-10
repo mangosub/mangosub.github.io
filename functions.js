@@ -20,3 +20,16 @@ function select_subs(id){
 function generate_sub(){
 	document.getElementById("sub_text_generate").innerHTML = document.getElementById("sub_text_input_generate").value
 }
+function random_work() {
+	var x = Math.floor((Math.random() * 3) + 1);
+
+	if (x === 1) {
+		location.href = "generate_info.html"
+	}
+	else if (x === 2) {
+		location.href = "fix_info.html"
+	}
+	else if (x === 3) {
+		location.href = "verify_info.html"
+	}
+}
