@@ -1,0 +1,45 @@
+.instructions_div {
+	margin-left: 420px; 
+	padding-top: 70px; 
+	position: fixed; 
+	height: 100%;
+    width: calc(100% - 840px);
+	z-index: -1;
+
+}
+.instructions_header {
+	text-align: center; 
+	font-size: 32px; 
+	line-height: 16px; 
+	margin-bottom: 29px;
+}
+.info{
+	height: 100%;
+    width: calc(100% - 840px);
+    margin-left: 420px;
+    position: fixed;
+	padding-top: 140px;
+	z-index: -1;
+}
+
+.example_img {
+	width: 45%;
+	display: inline-block;
+}
+.steps {
+	width: 45%;
+	margin-left: 5%;
+	display: inline-block;
+	vertical-align: top;
+}
+.working_button {
+	margin-right: 50px;
+	float: right;
+	background-color: #111;
+	color: white;
+	border: none;
+	padding: 15px 25px;
+}
+.div_buttons{
+	margin-top: 50px;
+}

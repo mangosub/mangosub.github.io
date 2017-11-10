@@ -1,0 +1,56 @@
+.type_div {
+	width: calc(100% - 840px);
+	height: 100%;	
+	margin-left: 420px;
+	padding-top: 70px; 
+	position: absolute;
+	z-index: -1;
+}
+.button {
+	background-color: #111;
+	color: white;
+	border: none;
+	padding: 15px 25px;
+}
+.header_name {
+	padding-top: 70px;
+	margin: auto; 
+	text-align: center;
+}
+.video_div {
+	background-color: #E5E9F2;
+	text-align: center;
+	margin: auto;
+	height: 100%;
+}
+.video_style {
+	position: relative; 
+	width: 700px;
+	height: 450px
+}
+.sub_text {
+	bottom: 100px;
+	width: 700px;
+	color: white;
+	margin: auto;
+	font-size: 15px;
+	text-align: center;
+	position: relative;
+}
+.slider {
+	width: 470px;
+	padding-left: 30px;
+	padding-right: 200px;
+	text-align: center;
+	margin: auto;
+}
+
+.slider_image {
+	width: 50px;
+	height: 50px;
+}
+
+.sub_text_input {
+	width: 550px;
+	height: 50px
+}
