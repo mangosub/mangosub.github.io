@@ -15,7 +15,7 @@
     position: fixed!important;
     overflow: auto;
     z-index: -1;
-}
+}}
 
 .event{
     height: 150px;
