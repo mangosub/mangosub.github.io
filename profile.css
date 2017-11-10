@@ -11,13 +11,12 @@
     height: 100%;
     width: calc(100% - 840px);
     margin-left: 420px;
-    background-color: #900000;
     position: fixed!important;
     overflow: auto;
     z-index: -1;
-}}
+}
 
-.event {
+.event{
     height: 150px;
     width: 90%;
     margin: auto;
