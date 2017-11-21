@@ -153,10 +153,10 @@
 	</ul>
 	<div class = "type_div">
 		<div class="video_div">
-			<h1 class="header_name">House of Cards S05E02</h1>
+			<h1 id="video_title" class="header_name"></h1>
 			<div class="video_sub" >
-				<video class = "video_style" controls>
-					<source src="videos/you_are_nothing.mp4" type="video/mp4">
+				<video id="video_player" class = "video_style" controls>
+					<source id="video_src" src="" type="video/mp4">
 					Your browser does not support the video tag.
 				</video>
 				<h1 class="sub_text" id = "sub_text_generate">You text will appear here</h1>
@@ -201,5 +201,40 @@
 			  }
 			</script>
 		</div>
-	</div></body>
+		<img id="test_image" src="">
+	</div>
+
+	<script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
+	<script>
+	  // Initialize Firebase
+	  var config = {
+	    apiKey: "AIzaSyDeunaXdZRX8Kc960GDhzik2bpNKwN2lDY",
+	    authDomain: "mangosub-kaist.firebaseapp.com",
+	    databaseURL: "https://mangosub-kaist.firebaseio.com",
+	    projectId: "mangosub-kaist",
+	    storageBucket: "mangosub-kaist.appspot.com",
+	    messagingSenderId: "753510490577"
+	  };
+	  firebase.initializeApp(config);
+
+	  var vid_title = document.getElementById("video_title");
+	  var dbRef = firebase.database().ref().child('subtitles').child('id').child('video_title');
+	  dbRef.once('value', snap => vid_title.innerHTML = snap.val());
+
+	  // getting video from firebase storage
+	  var storage = firebase.storage();
+	  var pathRef = "";
+	  var vid_url = firebase.database().ref().child('subtitles').child('id').child('video_url');
+	  vid_url.once('value').then(function(snapshot){
+	  	pathRef = snapshot.val();
+	  	pathStorage = storage.refFromURL(pathRef);
+	  	pathStorage.getDownloadURL().then(function(url){
+			var vid = document.getElementById('video_player');
+			vid.src = url;
+			vid.play();
+	  	});
+	  });
+
+	</script>
+</body>
 </html>

@@ -1,10 +1,10 @@
 .type_div {
-	width: calc(100% - 840px);
-	height: 100%;	
-	margin-left: 420px;
+	width: 50%;
+	margin-left: 25%;
 	padding-top: 70px; 
 	position: absolute;
 	z-index: -1;
+	margin-bottom: 100px;
 }
 .button {
 	background-color: #111;
@@ -25,12 +25,11 @@
 }
 .video_style {
 	position: relative; 
-	width: 700px;
-	height: 450px
+	width: 75%;
 }
 .sub_text {
-	bottom: 100px;
-	width: 700px;
+	bottom: 75px;
+	width: 75%;
 	color: white;
 	margin: auto;
 	font-size: 15px;
@@ -38,9 +37,9 @@
 	position: relative;
 }
 .slider {
-	width: 470px;
-	padding-left: 30px;
-	padding-right: 200px;
+	width: 75%;
+	padding-left: 15%;
+	padding-right: 35%;
 	text-align: center;
 	margin: auto;
 }
@@ -51,6 +50,6 @@
 }
 
 .sub_text_input {
-	width: 550px;
+	width: 60%;
 	height: 50px
 }
