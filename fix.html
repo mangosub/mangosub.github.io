@@ -161,7 +161,7 @@
 				<source src = "" type="video/mp4">
 			Your browser does not support the video tag.
 			</video>
-			<h1 class="sub_text" id = "sub_text_generate">You text will appear here</h1>
+			<h1 class="sub_text" id = "sub_text_generate">Loading video...</h1>
 		</div>
 		
 		<div class="slider">
@@ -231,6 +231,9 @@
 	  	pathRef = snapshot.val();
 	  	pathStorage = storage.refFromURL(pathRef);
 	  	pathStorage.getDownloadURL().then(function(url){
+
+	  		document.getElementById('sub_text_generate').innerHTML = "You text will appear here";
+
 			var vid = document.getElementById('video_player');
 			vid.src = url;
 			vid.play();
