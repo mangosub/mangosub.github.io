@@ -16,6 +16,10 @@
 	  cursor: pointer;
 	  width: 120px;
 	}
+	#prog{
+		-webkit-appearance: none;
+		appearance: none;
+	}
 </style>
 <body>
 	<ul class="nav">
@@ -32,10 +36,67 @@
 	<div style = "position: fixed; top: 50%; left: 40%; margin-top: -100px; margin-left: -200px;">
 		<p style = "height: 70px; width: 600px"><font size = "6">To request subtitles for a video press Browse, select the file and Submit</font></p>
 		<p style = "height: 50px;"><font size = "5">P.S. File size must not exceed 300MB</font></p>
-		<form action="http://mangosub.com/request_done_page" style = "text-align: right;"> 
-			<input type="file" name="fileupload" value="fileupload" id="fileupload"> 
-			<input type="submit" class = "submitbtn" value="Submit">
-		</form>
+		<label>
+			<progress value="0" max="100" id = "prog">0%</progress>
+			<input type="file" class = "fileupload" id="fileupload"> 
+		</label> 
+		<button type = "button" class = "submitbtn" id = "submitBtn" onclick = "location.href = 'https://mangosub.github.io/index.html'">SUBMIT</button>
     </div>
+
+
+	<script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
+	<script>
+	  // Initialize Firebase
+	    var config = {
+	       apiKey: "AIzaSyDeunaXdZRX8Kc960GDhzik2bpNKwN2lDY",
+	       authDomain: "mangosub-kaist.firebaseapp.com",
+	   	   databaseURL: "https://mangosub-kaist.firebaseio.com",
+	  	   projectId: "mangosub-kaist",
+	   	   storageBucket: "mangosub-kaist.appspot.com",
+	   	   messagingSenderId: "753510490577"
+	    };
+	    firebase.initializeApp(config);
+
+	    var prog = document.getElementById('prog');
+	    var fileupload = document.getElementById('fileupload');
+
+		//listen for file selection
+		fileupload.addEventListener('change', function(e){
+			// get the file
+			var file = e.target.files[0];
+
+			// create a storage ref
+			var storageRef = firebase.storage().ref('/videos/' + file.name);
+
+			//upload that file
+			var task = storageRef.put(file);
+
+			//Update progress bar
+			task.on('state_changed',
+				function(snapshot){
+					var percentage = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+					prog.value = percentage;
+				},
+
+				function(error){
+
+				},
+
+				function(){
+					/*
+					var postKey = firebase.database().ref('Posts/').push.key;
+					var downloadURL = task.snapshot.downloadURL;
+					var updates = {};
+					var postData = {
+						url = downloadURL,
+						user = user.uid
+					}
+					updates['/Posts' + postKey] = postData;
+					firebase.database().ref().update(updates);
+					*/
+				}
+			);
+		});
+	</script>
 </body>
 </html>
