@@ -94,7 +94,7 @@
 	<body>
 		<ul class="nav">
 			<li class="logo"><a href="index.html">MANGOSUB</a></li>
-			<li><a style="display: block; width: 77px;" id="bcredits">$100</a></li>
+			<li><a style="display: block; width: 77px;" id="bcredits"></a></li>
 			<li><a class="hov" onclick="firebase.auth().signOut();" style="cursor: pointer; display: block;" id="blogout">LOGOUT</a></li>
 			<li><a class="hov" onclick="document.getElementById('id01').style.display='block';" style="cursor: pointer; display: none;" id="blogin">LOGIN</a></li>
 			<li><a href="profile.html" class="hov" id="bprofile">PROFILE</a></li>
@@ -108,11 +108,7 @@
 					// User is signed in.
 					var displayName = user.displayName;
 					var email = user.email;
-					var emailVerified = user.emailVerified;
-					var photoURL = user.photoURL;
-					var isAnonymous = user.isAnonymous;
 					var uid = user.uid;
-					var providerData = user.providerData;
 					
 					document.getElementById("blogin").style.display = "none";
 					document.getElementById("blogout").style.display = "block";
@@ -124,8 +120,12 @@
 					document.getElementById("bprofile").href = "profile.html";
 					document.getElementById("bprofile").onclick = null;
 
-					console.log(displayName);
-					console.log(email);
+					var db = firebase.database().ref().child("users").child(uid);
+
+					db.child("credits").once("value").then(function(snapshot) {
+						var credits_val = snapshot.val();
+						document.getElementById("bcredits").innerHTML = "₡ " + String(credits_val);
+					});
 				} else {
 					// User is signed out.
 					document.getElementById("blogin").style.display = "block";
@@ -289,9 +289,14 @@
 					firebase.auth().createUserWithEmailAndPassword(email, password).then(function(user) {
 						user.updateProfile({displayName: username});
 
-						var mainDB = firebase.database().ref().child("users").child(user.uid);
-						mainDB.set({
-							points:0,
+						var db = firebase.database().ref().child("users").child(user.uid);
+						db.set({
+							username: username,
+							credits: 0,
+							score: 0,
+							generate: 0,
+							fix: 0,
+							verify: 0,
 						});
 
 						modal.style.display = "none";

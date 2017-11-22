@@ -27,7 +27,7 @@
 <body style="background-color: #990000;">
 	<ul class="nav">
 		<li class="logo"><a href="index.html">MANGOSUB</a></li>
-		<li><a style="display: block; width: 77px;" id="bcredits">$100</a></li>
+		<li><a style="display: block; width: 77px;" id="bcredits"></a></li>
 		<li><a href="" class="hov" onclick="firebase.auth().signOut();" style="cursor: pointer; display: block;">LOGOUT</a></li>
 		<li><a href="profile.html" class="hov active">PROFILE</a></li>
 		<li><a href="generate_info.html" class="hov">WORK</a></li>
@@ -36,24 +36,24 @@
 	</ul>
 	<div style="padding-top: 70px;">
 		<div class="side" style="">
-			<h1 style="text-align: center; padding-top: 30px; margin-bottom: 0px; font-size: 44px;">Aehnh</h1>
-			<p style="text-align: center; margin-top: 5px;">revolution@gmail.com</p>
-			<h1 style="text-align: center; margin-bottom: 0px; font-size: 44px;">53</h1>
+			<h1 style="text-align: center; padding-top: 30px; margin-bottom: 0px; font-size: 44px;" id="username"></h1>
+			<p style="text-align: center; margin-top: 5px;" id="email"></p>
+			<h1 style="text-align: center; margin-bottom: 0px; font-size: 44px;" id="ranking"></h1>
 			<p style="text-align: center; margin-bottom: 0px; margin-top: 5px;">RANKING</p>
-			<h1 style="text-align: center; margin-bottom: 0px; margin-top: 10px; font-size: 32px;">5,135</h1>
+			<h1 style="text-align: center; margin-bottom: 0px; margin-top: 10px; font-size: 32px;" id="score"></h1>
 			<p style="text-align: center; margin-bottom: 0px; margin-top: 5px;">TOTAL SCORE</p>
 
 			<div style="width: 100%; padding-left: 20%; padding-right: 20%; margin-top: 10px">
 				<div style="width: 20%; float: left;">
-					<h1 style="text-align: center; margin-bottom: 0px; margin-top: 10px; font-size: 26px;">14</h1>
+					<h1 style="text-align: center; margin-bottom: 0px; margin-top: 10px; font-size: 26px;" id="generate"></h1>
 					<p style="text-align: center; margin-top: 5px; font-size: 16px;">GENERATE</p>
 				</div>
 				<div style="width: 20%; float: left;">
-					<h1 style="text-align: center; margin-bottom: 0px; margin-top: 10px; font-size: 26px;">105</h1>
+					<h1 style="text-align: center; margin-bottom: 0px; margin-top: 10px; font-size: 26px;" id="fix"></h1>
 					<p style="text-align: center; margin-top: 5px; font-size: 16px;">FIX</p>
 				</div>
 				<div style="width: 20%; float: left;">
-					<h1 style="text-align: center; margin-bottom: 0px; margin-top: 10px; font-size: 26px;">32</h1>
+					<h1 style="text-align: center; margin-bottom: 0px; margin-top: 10px; font-size: 26px;" id="verify"></h1>
 					<p style="text-align: center; margin-top: 5px; font-size: 16px;">VERIFY</p>
 				</div>
 			</div>
@@ -69,127 +69,7 @@
 				</tr>
 			</table>
 			<div class="" style="background-color: #d3d3d3; height: calc(100% - 170px); overflow: auto; display: block; width: 100%;">
-				<table class="leaderboard">
-					<tr>
-						<td>19</td>
-						<td>Aehnh</td>
-						<td>5,135</td>
-					</tr>
-					<tr>
-						<td>20</td>
-						<td>Stalin</td>
-						<td>5,124</td>
-					</tr>
-					<tr>
-						<td>21</td>
-						<td>Trotsky</td>
-						<td>0</td>
-					</tr>
-					<tr>
-						<td>19</td>
-						<td>Aehnh</td>
-						<td>5,135</td>
-					</tr>
-					<tr>
-						<td>20</td>
-						<td>Stalin</td>
-						<td>5,124</td>
-					</tr>
-					<tr>
-						<td>21</td>
-						<td>Trotsky</td>
-						<td>0</td>
-					</tr>
-					<tr>
-						<td>19</td>
-						<td>Aehnh</td>
-						<td>5,135</td>
-					</tr>
-					<tr>
-						<td>20</td>
-						<td>Stalin</td>
-						<td>5,124</td>
-					</tr>
-					<tr>
-						<td>21</td>
-						<td>Trotsky</td>
-						<td>0</td>
-					</tr>
-					<tr>
-						<td>19</td>
-						<td>Aehnh</td>
-						<td>5,135</td>
-					</tr>
-					<tr>
-						<td>20</td>
-						<td>Stalin</td>
-						<td>5,124</td>
-					</tr>
-					<tr>
-						<td>21</td>
-						<td>Trotsky</td>
-						<td>0</td>
-					</tr>
-					<tr>
-						<td>19</td>
-						<td>Aehnh</td>
-						<td>5,135</td>
-					</tr>
-					<tr>
-						<td>20</td>
-						<td>Stalin</td>
-						<td>5,124</td>
-					</tr>
-					<tr>
-						<td>21</td>
-						<td>Trotsky</td>
-						<td>0</td>
-					</tr>
-					<tr>
-						<td>19</td>
-						<td>Aehnh</td>
-						<td>5,135</td>
-					</tr>
-					<tr>
-						<td>20</td>
-						<td>Stalin</td>
-						<td>5,124</td>
-					</tr>
-					<tr>
-						<td>21</td>
-						<td>Trotsky</td>
-						<td>0</td>
-					</tr>
-					<tr>
-						<td>19</td>
-						<td>Aehnh</td>
-						<td>5,135</td>
-					</tr>
-					<tr>
-						<td>20</td>
-						<td>Stalin</td>
-						<td>5,124</td>
-					</tr>
-					<tr>
-						<td>21</td>
-						<td>Trotsky</td>
-						<td>0</td>
-					</tr>
-					<tr>
-						<td>19</td>
-						<td>Aehnh</td>
-						<td>5,135</td>
-					</tr>
-					<tr>
-						<td>20</td>
-						<td>Stalin</td>
-						<td>5,124</td>
-					</tr>
-					<tr>
-						<td>21</td>
-						<td>Trotsky</td>
-						<td>0</td>
-					</tr>
+				<table class="leaderboard" id="rankings">
 				</table>
 			</div>
 		</div>
@@ -367,21 +247,61 @@
 				// User is signed in.
 				var displayName = user.displayName;
 				var email = user.email;
-				var emailVerified = user.emailVerified;
-				var photoURL = user.photoURL;
-				var isAnonymous = user.isAnonymous;
 				var uid = user.uid;
-				var providerData = user.providerData;
 
-				var mainDB = firebase.database().ref().child("users").child(user.uid);
-				var points = mainDB.child("points");
+				document.getElementById("username").innerHTML = displayName;
+				document.getElementById("email").innerHTML = email;
 
-				points.once("value").then(function(snapshot){
-					var pp = snapshot.val();
-					alert(String(pp));
+				var db = firebase.database().ref().child("users");
+
+				db.child(uid).once("value").then(function(snapshot) {
+					var value = snapshot.val();
+					document.getElementById("bcredits").innerHTML = "₡ " + String(value.credits);
+					document.getElementById("score").innerHTML = String(value.score);
+					document.getElementById("generate").innerHTML = String(value.generate);
+					document.getElementById("fix").innerHTML = String(value.fix);
+					document.getElementById("verify").innerHTML = String(value.verify);
+					console.log(snapshot.events == null);
 				});
 
-				console.log(displayName);
+				db.orderByChild("score").once("value").then(function(snapshot) {
+					var names = new Array();
+					var scores = new Array();
+					var uids = new Array();
+					snapshot.forEach(function(childSnapshot) {
+						var value = childSnapshot.val();
+						names.push(value.username);
+						scores.push(value.score);
+						uids.push(childSnapshot.key);
+					});
+					var rank = 1;
+					while(names.length > 0) {
+						var name = names.pop();
+						var score = scores.pop();
+						var uid2 = uids.pop();
+
+						var row = document.createElement("tr");
+						var drank = document.createElement("td");
+						var trank = document.createTextNode(String(rank));
+						drank.appendChild(trank);
+						row.appendChild(drank);
+						var dname = document.createElement("td");
+						var tname = document.createTextNode(name);
+						dname.appendChild(tname);
+						row.appendChild(dname);
+						var dscore = document.createElement("td");
+						var tscore = document.createTextNode(String(score));
+						dscore.appendChild(tscore);
+						row.appendChild(dscore);
+						document.getElementById("rankings").appendChild(row);
+
+						if(uid == uid2) {
+							document.getElementById("ranking").innerHTML = String(rank);
+						}
+						rank++;
+					}
+				});
+
 			} else {
 				// User is signed out.
 				window.location = "index.html";
