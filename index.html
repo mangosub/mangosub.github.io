@@ -76,22 +76,68 @@
 			background-color: #111;
 		}
 		</style>
+		<script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
+		<script>
+			// Initialize Firebase
+			var config = {
+				apiKey: "AIzaSyDeunaXdZRX8Kc960GDhzik2bpNKwN2lDY",
+				authDomain: "mangosub-kaist.firebaseapp.com",
+				databaseURL: "https://mangosub-kaist.firebaseio.com",
+				projectId: "mangosub-kaist",
+				storageBucket: "mangosub-kaist.appspot.com",
+				messagingSenderId: "753510490577"
+			};
+			firebase.initializeApp(config);
+		</script>
 	</head>
 
 	<body>
 		<ul class="nav">
 			<li class="logo"><a href="index.html">MANGOSUB</a></li>
-			<li><a class="placeholder"></a></li>
-			<li><a class="placeholder"></a></li>
-			<li><a style="display: none;" id="bcredits">$420</a></li>
-			<li><a class="hov" onclick="firebase.auth().signOut();" style="cursor: pointer; display: none;" id="blogout">LOGOUT</a></li>
-			<li><a class="hov" onclick="document.getElementById('id01').style.display='block';" style="cursor: pointer; display: block;" id="blogin">LOGIN</a></li>
+			<li><a style="display: block; width: 77px;" id="bcredits">$100</a></li>
+			<li><a class="hov" onclick="firebase.auth().signOut();" style="cursor: pointer; display: block;" id="blogout">LOGOUT</a></li>
+			<li><a class="hov" onclick="document.getElementById('id01').style.display='block';" style="cursor: pointer; display: none;" id="blogin">LOGIN</a></li>
 			<li><a href="profile.html" class="hov" id="bprofile">PROFILE</a></li>
 			<li><a href="generate_info.html" class="hov" id="bwork">WORK</a></li>
 			<li><a href="request.html" class="hov" id="brequest">REQUEST</a></li>
 			<li><a href="index.html" class="hov active">ABOUT</a></li>
 		</ul>
-		<div style="padding-top: 70px; overflow: auto;">
+		<script>
+			firebase.auth().onAuthStateChanged(function(user) {
+				if (user) {
+					// User is signed in.
+					var displayName = user.displayName;
+					var email = user.email;
+					var emailVerified = user.emailVerified;
+					var photoURL = user.photoURL;
+					var isAnonymous = user.isAnonymous;
+					var uid = user.uid;
+					var providerData = user.providerData;
+					
+					document.getElementById("blogin").style.display = "none";
+					document.getElementById("blogout").style.display = "block";
+					document.getElementById("bcredits").style.display = "block";
+					document.getElementById("brequest").href = "request.html";
+					document.getElementById("brequest").onclick = null;
+					document.getElementById("bwork").href = "generate_info.html";
+					document.getElementById("bwork").onclick = null;
+					document.getElementById("bprofile").href = "profile.html";
+					document.getElementById("bprofile").onclick = null;
+				} else {
+					// User is signed out.
+					document.getElementById("blogin").style.display = "block";
+					document.getElementById("blogout").style.display = "none";
+					document.getElementById("bcredits").style.display = "none";
+					document.getElementById("brequest").href = "#";
+					document.getElementById("brequest").onclick = function() {document.getElementById('id01').style.display='block'};
+					document.getElementById("bwork").href = "#";
+					document.getElementById("bwork").onclick = function() {document.getElementById('id01').style.display='block'};
+					document.getElementById("bprofile").href = "#";
+					document.getElementById("bprofile").onclick = function() {document.getElementById('id01').style.display='block'};
+				}
+			});
+		</script>
+		<div style="margin-top: 70px; overflow: auto; height: calc(100vh - 70px);">
 			<div style="margin-left: 100px;">
 				<p style = "height: 50px; width: 80%; text-align: left; font-size: 200%;"> MANGOSUB</p>
 
@@ -184,19 +230,7 @@
 				</div>
 			</div>
 		</div>
-		<script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
-		<script>
-			// Initialize Firebase
-			var config = {
-				apiKey: "AIzaSyDeunaXdZRX8Kc960GDhzik2bpNKwN2lDY",
-				authDomain: "mangosub-kaist.firebaseapp.com",
-				databaseURL: "https://mangosub-kaist.firebaseio.com",
-				projectId: "mangosub-kaist",
-				storageBucket: "mangosub-kaist.appspot.com",
-				messagingSenderId: "753510490577"
-			};
-			firebase.initializeApp(config);
-		</script>
+		
 		<script>
 			var modal = document.getElementById('id01');
 			window.onclick = function(event) {
@@ -232,13 +266,13 @@
 				var form = document.forms[0];
 				var email = form.elements["email"].value;
 				var password = form.elements["psw"].value;
-				firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
+				firebase.auth().signInWithEmailAndPassword(email, password).then(function(user) {
+					modal.style.display = "none";
+				}).catch(function(error) {
 					var errorCode = error.code;
 					var errorMessage = error.message;
 					document.getElementById("elogin").innerHTML = errorMessage;
 				});
-				modal.style.display = "none";
-				console.log("hi");
 			}
 			function register() {
 				var form = document.forms[1];
@@ -249,7 +283,9 @@
 				if(password != password2) {
 					document.getElementById("eregister").innerHTML = "The passwords do not match.";
 				} else {
-					firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
+					firebase.auth().createUserWithEmailAndPassword(email, password).then(function(user) {
+						modal.style.display = "none";
+					}).catch(function(error) {
 						var errorCode = error.code;
 						var errorMessage = error.message;
 						document.getElementById("eregister").innerHTML = errorMessage;
@@ -259,39 +295,6 @@
 			function reset() {
 
 			}
-			firebase.auth().onAuthStateChanged(function(user) {
-				if (user) {
-					// User is signed in.
-					var displayName = user.displayName;
-					var email = user.email;
-					var emailVerified = user.emailVerified;
-					var photoURL = user.photoURL;
-					var isAnonymous = user.isAnonymous;
-					var uid = user.uid;
-					var providerData = user.providerData;
-					
-					document.getElementById("blogin").style.display = "none";
-					document.getElementById("blogout").style.display = "block";
-					document.getElementById("bcredits").style.display = "block";
-					document.getElementById("brequest").href = "request.html";
-					document.getElementById("brequest").onclick = null;
-					document.getElementById("bwork").href = "generate_info.html";
-					document.getElementById("bwork").onclick = null;
-					document.getElementById("bprofile").href = "profile.html";
-					document.getElementById("bprofile").onclick = null;
-				} else {
-					// User is signed out.
-					document.getElementById("blogin").style.display = "block";
-					document.getElementById("blogout").style.display = "none";
-					document.getElementById("bcredits").style.display = "none";
-					document.getElementById("brequest").href = "#";
-					document.getElementById("brequest").onclick = function() {document.getElementById('id01').style.display='block'};
-					document.getElementById("bwork").href = "#";
-					document.getElementById("bwork").onclick = function() {document.getElementById('id01').style.display='block'};
-					document.getElementById("bprofile").href = "#";
-					document.getElementById("bprofile").onclick = function() {document.getElementById('id01').style.display='block'};
-				}
-			});
 		</script>
 	</body>
 </html>

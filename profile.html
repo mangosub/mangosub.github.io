@@ -5,14 +5,30 @@
 	<link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
 	<link rel="stylesheet" type="text/css" href="nav.css">
 	<link rel="stylesheet" type="text/css" href="assets/profile.css">
+	<script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
+	<script>
+		// Initialize Firebase
+		var config = {
+			apiKey: "AIzaSyDeunaXdZRX8Kc960GDhzik2bpNKwN2lDY",
+			authDomain: "mangosub-kaist.firebaseapp.com",
+			databaseURL: "https://mangosub-kaist.firebaseio.com",
+			projectId: "mangosub-kaist",
+			storageBucket: "mangosub-kaist.appspot.com",
+			messagingSenderId: "753510490577"
+		};
+		firebase.initializeApp(config);
+		firebase.auth().onAuthStateChanged(function(user) {
+			if (!user) {
+				window.location = "index.html";
+			}
+		});
+	</script>
 </head>
 <body style="background-color: #990000;">
 	<ul class="nav">
 		<li class="logo"><a href="index.html">MANGOSUB</a></li>
-		<li><a class="placeholder"></a></li>
-		<li><a>$420</a></li>
-		<li><a class="placeholder"></a></li>
-		<li><a href="" class="hov">LOGOUT</a></li>
+		<li><a style="display: block; width: 77px;" id="bcredits">$100</a></li>
+		<li><a href="" class="hov" onclick="firebase.auth().signOut();" style="cursor: pointer; display: block;">LOGOUT</a></li>
 		<li><a href="profile.html" class="hov active">PROFILE</a></li>
 		<li><a href="generate_info.html" class="hov">WORK</a></li>
 		<li><a href="request.html" class="hov">REQUEST</a></li>
@@ -345,5 +361,24 @@
 		</div>
 		
 	</div>
+	<script>
+		firebase.auth().onAuthStateChanged(function(user) {
+			if (user) {
+				// User is signed in.
+				var displayName = user.displayName;
+				var email = user.email;
+				var emailVerified = user.emailVerified;
+				var photoURL = user.photoURL;
+				var isAnonymous = user.isAnonymous;
+				var uid = user.uid;
+				var providerData = user.providerData;
+
+				console.log("lol");
+			} else {
+				// User is signed out.
+				window.location = "index.html";
+			}
+		});
+	</script>
 </body>
 </html>
