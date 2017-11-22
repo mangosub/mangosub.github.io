@@ -161,7 +161,7 @@
 				<source src = "" type="video/mp4">
 			Your browser does not support the video tag.
 			</video>
-			<h1 class="sub_text" id = "sub_text_generate">Loading video...</h1>
+			<h1 class="sub_text" style="color: black" id = "sub_text_generate">Loading video...</h1>
 		</div>
 		
 		<div class="slider">
@@ -170,12 +170,12 @@
 			<img class = "slider_image" id="end_slider" src="images/end.png">
 		</div>
 		<div class="sub_show">
-			<input type="text" class="sub_text_input" id="sub_text_input_generate" value="Something is gonna happen">
+			<input type="text" class="sub_text_input" id="sub_text_input_generate" value="">
 			<img id = "tick" src="images/check_unselected.png" style= 'width : 30px; height: 30px; margin-left: 25px' onclick='tick_click()'></img>
 		</div>
 		<div class = "div_buttons">
 			<a href="index.html"><button class="button" style="margin-right: 50px">Home</button></a>
-			<a ><button class="button" onclick="document.getElementById('id01').style.display='block'" style="margin-left: 50px">Submit</button></a>
+			<a ><button class="button" onclick="submit_fix()" style="margin-left: 50px">Submit</button></a>
 		</div>
 	
 		<div id = "id01" class = "modal">
@@ -233,11 +233,13 @@
 	  	pathStorage = storage.refFromURL(pathRef);
 	  	pathStorage.getDownloadURL().then(function(url){
 
-	  		document.getElementById('sub_text_generate').innerHTML = "You text will appear here";
-
+	  		document.getElementById('sub_text_generate').innerHTML = "";
+	  		document.getElementById('sub_text_generate').style.color = "white";
 			var vid = document.getElementById('video_player');
 			vid.src = url;
-			vid.play();
+			loaded = true;
+			//vid.play();
+			random_sub();
 	  	});
 	  });
 
