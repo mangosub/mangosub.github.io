@@ -373,6 +373,14 @@
 				var uid = user.uid;
 				var providerData = user.providerData;
 
+				var mainDB = firebase.database().ref().child("users").child(user.uid);
+				var points = mainDB.child("points");
+
+				points.once("value").then(function(snapshot){
+					var pp = snapshot.val();
+					alert(String(pp));
+				});
+
 				console.log(displayName);
 			} else {
 				// User is signed out.

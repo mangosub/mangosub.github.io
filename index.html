@@ -288,6 +288,12 @@
 				} else {
 					firebase.auth().createUserWithEmailAndPassword(email, password).then(function(user) {
 						user.updateProfile({displayName: username});
+
+						var mainDB = firebase.database().ref().child("users").child(user.uid);
+						mainDB.set({
+							points:0,
+						});
+
 						modal.style.display = "none";
 					}).catch(function(error) {
 						var errorCode = error.code;
