@@ -123,6 +123,9 @@
 					document.getElementById("bwork").onclick = null;
 					document.getElementById("bprofile").href = "profile.html";
 					document.getElementById("bprofile").onclick = null;
+
+					console.log(displayName);
+					console.log(email);
 				} else {
 					// User is signed out.
 					document.getElementById("blogin").style.display = "block";
@@ -284,6 +287,7 @@
 					document.getElementById("eregister").innerHTML = "The passwords do not match.";
 				} else {
 					firebase.auth().createUserWithEmailAndPassword(email, password).then(function(user) {
+						user.updateProfile({displayName: username});
 						modal.style.display = "none";
 					}).catch(function(error) {
 						var errorCode = error.code;
