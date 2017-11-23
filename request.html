@@ -28,9 +28,9 @@
 			<p style = "height: 50px;"><font size = "5">P.S. File size must not exceed 300MB</font></p>
 			<label>
 				<progress value="0" max="100" id = "prog">0%</progress>
-				<input type="file" class = "fileupload" id="fileupload"> 
+				<input type="file" accept="video/*" class = "fileupload" id="fileupload"> 
 			</label> 
-			<button style="width: auto;" onclick="location.href = 'index.html'">SUBMIT</button>
+			<button id = "submitbtn" style="width: auto;">SUBMIT</button>
 	    </div>
 	</div>
 
@@ -50,41 +50,50 @@
 
 	    var prog = document.getElementById('prog');
 	    var fileupload = document.getElementById('fileupload');
+	    var submitbtn = document.getElementById('submitbtn');
 
 		//listen for file selection
 		fileupload.addEventListener('change', function(e){
-			// get the file
 			var file = e.target.files[0];
-
-			// create a storage ref
 			var storageRef = firebase.storage().ref('/videos/' + file.name);
-
-			//upload that file
 			var task = storageRef.put(file);
+			var percentage = 0
 
+			submitbtn.addEventListener('click', function(){
+				task.pause();
+				if (percentage < 100){
+					if (confirm('You have not uploaded your video yet. Do you want to continue?')){
+						task.resume();
+					}
+					else{
+						task.cancel();
+						location.href = 'request.html';
+					}
+				}
+				else{
+					location.href = 'index.html';
+				}
+			});
 			//Update progress bar
 			task.on('state_changed',
 				function(snapshot){
-					var percentage = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+					percentage = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
 					prog.value = percentage;
 				},
-
 				function(error){
 
 				},
 
 				function(){
-					/*
-					var postKey = firebase.database().ref('Posts/').push.key;
+					var path = firebase.database().ref('subtitles/').push();
 					var downloadURL = task.snapshot.downloadURL;
-					var updates = {};
-					var postData = {
-						url = downloadURL,
-						user = user.uid
-					}
-					updates['/Posts' + postKey] = postData;
-					firebase.database().ref().update(updates);
-					*/
+					path.set({
+						requested_time: firebase.database.ServerValue.TIMESTAMP;
+						requested_user: user.uid;
+						video_title: file.name;
+						video_url: downloadURL;
+						done: 0;
+					});
 				}
 			);
 		});
