@@ -85,14 +85,21 @@
 				},
 
 				function(){
-					var path = firebase.database().ref('subtitles/').push();
-					var downloadURL = task.snapshot.downloadURL;
-					path.set({
-						requested_time: firebase.database.ServerValue.TIMESTAMP;
-						requested_user: user.uid;
-						video_title: file.name;
-						video_url: downloadURL;
-						done: 0;
+					firebase.auth().onAuthStateChanged(function(user) {
+						if (user) {
+							var uid = user.uid;
+							var path = firebase.database().ref('subtitles/').push();
+							var downloadURL = task.snapshot.downloadURL;
+							path.set({
+								requested_time: firebase.database.ServerValue.TIMESTAMP;
+								requested_user: uid;
+								video_title: file.name;
+								video_url: downloadURL;
+								done: 0;
+							});
+						} else {
+
+						}
 					});
 				}
 			);
