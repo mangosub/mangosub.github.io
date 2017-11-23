@@ -4,31 +4,8 @@
 		<title></title>
 		<link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
 		<link rel="stylesheet" type="text/css" href="nav.css">
+		<link rel="stylesheet" type="text/css" href="convention.css">
 		<style>
-		input[type=text], [type=email], input[type=password] {
-			width: 100%;
-			padding: 12px 20px;
-			margin: 8px 0;
-			display: inline-block;
-			border: 1px solid #ccc;
-			box-sizing: border-box;
-			font-size: 16px;
-			font-family: Lato;
-		}
-		.submitbtn{
-			background-color: #990000;
-			color: white;
-			padding: 14px 20px;
-			margin: 8px 0;
-			border: none;
-			cursor: pointer;
-			width: 100%;
-			font-size: 16px;
-			font-family: Lato;
-		}
-		button:hover {
-			opacity: 0.8;
-		}
 		.container {
 			padding: 16px;
 		}
@@ -210,7 +187,7 @@
 						<input type="email" placeholder="Email" name="email" required>
 						<input type="password" placeholder="Password" name="psw" required>
 						<div style="font-size: 16px; margin: 8px 0;"><label><input type="checkbox" style=""> Remember me</label></div>
-						<button type="submit" class="submitbtn">LOGIN</button>
+						<button type="submit">LOGIN</button>
 						<div style="font-size: 16px; margin: 8px 0; color: red;" id="elogin"></div>
 					</form>
 				</div>
@@ -220,14 +197,14 @@
 						<input type="email" placeholder="Email" name="email" required>
 						<input type="password" placeholder="Password" name="psw" required>
 						<input type="password" placeholder="Confirm Password" name="cpsw" required>
-						<button type="submit" class="submitbtn">REGISTER</button>
+						<button type="submit">REGISTER</button>
 						<div style="font-size: 16px; margin: 8px 0; color: red;" id="eregister"></div>
 					</form>
 				</div>
 				<div class="container" id="creset" style="display: none;">
 					<form action="javascript:reset();">
 						<input type="email" placeholder="Email" name="email" required>
-						<button type="submit" class="submitbtn">RESET</button>
+						<button type="submit"">RESET</button>
 						<div style="font-size: 16px; margin: 8px 0; color: red;" id="ereset"></div>
 					</form>
 				</div>

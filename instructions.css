@@ -30,14 +30,7 @@
 	display: inline-block;
 	vertical-align: top;
 }
-.working_button {
-	margin-right: 50px;
-	float: right;
-	background-color: #111;
-	color: white;
-	border: none;
-	padding: 15px 25px;
-}
+
 .div_buttons{
 	margin-top: 50px;
 }
