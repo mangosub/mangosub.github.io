@@ -7,11 +7,14 @@
 	<link rel="stylesheet" type="text/css" href="nav.css">
 	<link rel="stylesheet" type="text/css" href="convention.css">
 	<link rel="stylesheet" type="text/css" href="instructions.css">
+	<link rel = "stylesheet" type = "text/css" href = "media-player.css">
 	<script type="text/javascript" src = "input_to_sub.js"></script>
 	<script type ="text/javascript" src="jquery.js"></script>
   	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
   	<script type="text/javascript" src = "functions.js"></script>
+  	<script type="text/javascript" src="setBoundingClientRect.js"></script>
+  	<script type="text/javascript" src="media-player.js"></script>
 </head>
 <body>
 	<ul class="nav">
@@ -143,11 +146,29 @@
 		<h1 class="header_name">House Of Cards S05E02</h1>
 
 		<div class="video_sub" >
-			<video class = "video_style" id = "videoo" controls>
-				<source src="videos/you_are_nothing.mp4" type="video/mp4">
-			Your browser does not support the video tag.
+			<video id="video_player" class = "video_style" controls>
+				<source id="video_src" src="" type="video/mp4">
+				Your browser does not support the video tag.
 			</video>
-			<h1 class="sub_text" id = "sub_text_generate">You text will appear here</h1>
+			<h1 class="sub_text" style="color: white" id = "sub_text_generate">Loading video...</h1>
+		</div>
+			<div class="video_controls">
+
+				
+				<div id='media-controls' >
+					<div id="other_controls" style="padding-bottom: 10px">
+						<img src="images/play.png" id='play-pause-button' class='play' title='play' onclick='togglePlayPause();'>
+						<img src="images/volume+.png" id='volume-inc-button' class='volume-plus' title='Increase volume' onclick='changeVolume("+");'>
+						<img src="images/volume-.png" id='volume-dec-button' class='volume-minus' title='Decrease volume' onclick='changeVolume("-");'>
+					</div>
+					<div id="done_and_progress">
+						<div id="progressed_bar" title="Already generated portions."></div>
+						<progress id='progress-bar' min='0' max='100' value='0' title="Progress bar">0% played</progress>
+					</div>
+					
+
+
+				</div>
 		</div>
 		
 		<div class="slider">
