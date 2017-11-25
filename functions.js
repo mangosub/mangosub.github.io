@@ -14,8 +14,11 @@ var fix_tex;
 var is_fixed;
 var ticked = "-1";
 
+var fb_gen_tex;
+var fb_fix_1_tex;
+
 function tick_click(){
-    submit_generate();
+    tick_show();
     change_tick_image();
 }
 
@@ -90,15 +93,19 @@ window.onload = function(){
 };
 
 function submit_fix(){
+	console.log(fixed_count, gs_time, ge_time, fb_gen_tex);
 	var text = document.getElementById("sub_text_input_generate").value;
 	var dbRef = firebase.database().ref().child('subtitles').child(vid_id).child("sub_times").child(ran_int);
 	dbRef.once("value", function(snapshot){
-		if (gs_time !== undefined) {
+		if (is_fixed) {
 			fixed_count = fixed_count+1;
 			if (fixed_count === 1) {
 				dbRef.set({
 					"fix_1": text,
 					"fixed":fixed_count,
+					"e_time":ge_time,
+					"s_time":gs_time,
+					"generated":fb_gen_tex,
 					});
 				document.getElementById('id01').style.display='block';
 			}
@@ -106,6 +113,10 @@ function submit_fix(){
 				dbRef.set({
 					"fix_2": text,
 					"fixed":fixed_count,
+					"fix_1": fb_fix_1_tex,
+					"e_time":ge_time,
+					"s_time":gs_time,
+					"generated":fb_gen_tex,
 					});
 				document.getElementById('id01').style.display='block';
 
@@ -128,6 +139,7 @@ function submit(){
 				"generated": text,
 				"s_time": gs_time,
 				"e_time": ge_time,
+				"fixed":0,
 				});
 			document.getElementById('id01').style.display='block';
 		}
@@ -228,6 +240,16 @@ function random_sub(){
 				fixed_count = child.child("fixed").val();
 
 				text = child.child("generated").val();
+
+				fb_gen_tex = text;
+
+				gs_time = child.child("s_time").val();
+				ge_time = child.child("e_time").val();
+
+				if (fixed_count == 1) {
+					fb_fix_1_tex = child.child("fix_1").val();
+				}
+
 				s_time = child.child("s_time").val();
 				e_time = child.child("e_time").val();
 
@@ -236,7 +258,7 @@ function random_sub(){
 				// Set sliders to sub place;
 				var v_dur = document.getElementById('video_player').duration;
 
-				//console.log(v_dur, vlen, elen);
+				console.log(v_dur, vlen, elen);
 				//console.log(document.getElementById("end_slider").getBoundingClientRect().right);
 				document.getElementById("start_slider").style.left = s_time*vlen/v_dur +"px";
 				document.getElementById("end_slider").style.left = (e_time*vlen/v_dur - elen) + "px";
