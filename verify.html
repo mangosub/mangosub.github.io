@@ -180,17 +180,17 @@
 			<h1 style="font-size: 12px; position: relative; margin-left: 25px">Select the most correct line that corresponds to the videos section.</h1>
 		</div>
 		<div class="sub_show">
-			<input type="text" style = "width: 60%"  class="sub_text_input" id="sub_text_input_generate_1" readonly value="Something is gonna happen">
+			<input type="text" style = "width: 60%"  class="sub_text_input" id="sub_text_input_generate_1" readonly value="">
 			<img id="tick_1" src="images/check_unselected.png" style= 'width : 30px; height: 30px; margin-left: 25px' onclick='select_subs("1")'></img>
 		</div>
 
 		<div class="sub_show">
-			<input type="text"  style = "width: 60%" class="sub_text_input" id="sub_text_input_generate_2" readonly value="Something will happen soon">
+			<input type="text"  style = "width: 60%" class="sub_text_input" id="sub_text_input_generate_2" readonly value="">
 			<img id="tick_2" src="images/check_unselected.png" style= 'width : 30px; height: 30px; margin-left: 25px' onclick='select_subs("2")'></img>
 		</div>
 
 		<div class="sub_show">
-			<input type="text" style = "width: 60%" class="sub_text_input" id="sub_text_input_generate_3" readonly value = "Something is going to happen">
+			<input type="text" style = "width: 60%" class="sub_text_input" id="sub_text_input_generate_3" readonly value = "">
 			<img id="tick_3" src="images/check_unselected.png" style= 'width : 30px; height: 30px; margin-left: 25px' onclick='select_subs("3")'></img>
 		</div>
 		<div class = "div_buttons">
@@ -213,7 +213,6 @@
 		    </div>
 		  </form>
 		</div>
-		<script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
 		<script>
 			var config = {
 		       apiKey: "AIzaSyDeunaXdZRX8Kc960GDhzik2bpNKwN2lDY",
@@ -230,14 +229,16 @@
 		    var choice = -1;
 		    var DBref = firebase.database().ref().child("subtitles");
 			DBref.orderByChild("done").once("value").then(function(snapshot){
-				snapshot.forEach((video)=>{
-					var fixed = video.child("done").val(); // all fixes to the video have been made and we start to verify
+				snapshot.forEach(function(video){
+					var fixed = video.val().done; // all fixes to the video have been made and we start to verify
+					console.log(fixed);
 					if (fixed === 2){
 						var sub_times = video.child("sub_times");
 						sub_times.once("value").then(function(intervals){
-							intervals.forEach((interval)=>{
-								var numFixes = interval.child("fixed").val();
+							intervals.forEach(function(interval){
+								var numFixes = interval.val().fixed;
 								if (numFixes === 2){
+
 									generated = interval.child("generated").val();
 									fix_1 = interval.child("fix_1").val();
 									fix_2 = interval.child("fix_2").val();
@@ -261,9 +262,8 @@
 											var vid = document.getElementById("videoo");
 											vid.src = url;
 											var video_title = document.getElementById("video_title");
-											video_title = video.child("video_title").val();
+											video_title = video.val().video_title;
 											loaded = true;
-
 										})
 									})
 									var sbmt = document.getElementById("SubmitBtn");
