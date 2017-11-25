@@ -99,8 +99,10 @@
 				<p id="filename">Click to choose a video file</p>
 			</div>
 			<button id = "submitbtn" style="float: right; width: auto; margin-top: 30px;" disabled>SUBMIT</button>
+			<p id="credcost" style="margin-top: 30px;"></p>
+			<p id="notice" style="color: red;"></p>
 			<div id="id01" class="modal">
-				<div class="modal-content" style="width: 500px;">
+				<div class="modal-content" style="width: 500px; margin-top: 8%;">
 					<div class="container" style="overflow: hidden">
 						<p style="font-size: 18px; color: #990000;" id="status">Uploading Video</p>
 						<p id="description">Please wait</p>
@@ -118,65 +120,92 @@
 	    var submitbtn = document.getElementById('submitbtn');
 	    var cancelbtn = document.getElementById('cancelbtn');
 		var modal = document.getElementById('id01');
+		var duration = 0;
+		var cost = -1;
 
 		//listen for file selection
 		fileupload.addEventListener('change', function(e) {
 			var file = e.target.files[0];
 			console.log(e.target.files);
 			var percentage = 0;
+			var vid = document.createElement('video');
 
 			document.getElementById("filename").innerHTML = file.name;
 
-			submitbtn.onclick = function() {
-				/* task.pause();
-				if (percentage < 100){
-					if (confirm('You have not uploaded your video yet. Do you want to continue?')){
-						task.resume();
-					}
-					else{
-						task.cancel();
-						location.href = 'request.html';
-					}
-				}
-				else{
-					location.href = 'index.html';
-				} */
-				modal.style.display = "block";
-				var storageRef = firebase.storage().ref('/videos/' + file.name);
-				var task = storageRef.put(file);
-				task.on('state_changed',
-					function(snapshot) {
-						console.log(file.name);
-						percentage = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-						prog.value = percentage;
-					}, function(error) {
+			var fileURL = URL.createObjectURL(file);
+			vid.src = fileURL;
+			// wait for duration to change from NaN to the actual duration
+			vid.ondurationchange = function() {
+				duration = Math.round(vid.duration / 60);
+				cost = Math.max(1, duration * 10)
+				document.getElementById("credcost").innerHTML = "Cost: " + String(cost) + " credits (" + String(duration) + " minutes)";
 
-					}, function() {
-						var uid = firebase.auth().currentUser.uid;
-						var path = firebase.database().ref('subtitles/').push();
-						var downloadURL = task.snapshot.downloadURL;
-						path.set({
-							requested_time: firebase.database.ServerValue.TIMESTAMP,
-							requested_user: uid,
-							video_title: file.name,
-							video_url: downloadURL,
-							done: 0
-						});
-						document.getElementById("status").innerHTML = "Upload Complete";
-						document.getElementById("description").innerHTML = "You can download the subtitles in the Profile page once available";
-						cancelbtn.innerHTML = "HOME";
-						cancelbtn.onclick = function() {
-							location.href = "index.html";
+				submitbtn.onclick = function() {
+					modal.style.display = "block";
+					var storageRef = firebase.storage().ref('/videos/' + file.name);
+					var task = storageRef.put(file);
+					task.on('state_changed',
+						function(snapshot) {
+							console.log(file.name);
+							percentage = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+							prog.value = percentage;
+						}, function(error) {
+
+						}, function() {
+							var uid = firebase.auth().currentUser.uid;
+							var path = firebase.database().ref('/subtitles/').push();
+							var downloadURL = task.snapshot.downloadURL;
+							path.set({
+								requested_time: firebase.database.ServerValue.TIMESTAMP,
+								requested_user: uid,
+								video_title: file.name,
+								video_url: downloadURL,
+								done: 0
+							});
+							var userpath = firebase.database().ref("/users/" + uid + "/events/").push();
+							userpath.set({
+								time: firebase.database.ServerValue.TIMESTAMP,
+								type: "request",
+								description: "You have requested the subtitles for the video " + file.name + ".",
+								credits: -cost
+							});
+
+							var db = firebase.database().ref().child("users").child(uid);
+							db.child("credits").once("value").then(function(snapshot) {
+								var credits_val = snapshot.val();
+								firebase.database().ref("/users/" + uid).update({"credits": credits_val - cost});
+								document.getElementById("status").innerHTML = "Upload Complete";
+								document.getElementById("description").innerHTML = "You can download the subtitles in the Profile page once available";
+								cancelbtn.innerHTML = "HOME";
+								cancelbtn.onclick = function() {
+									location.href = "index.html";
+								}
+							});
 						}
-					}
-				);
-				cancelbtn.onclick = function() {
-					task.cancel();
-					prog.value = 0;
-					modal.style.display = "none";
+					);
+					cancelbtn.onclick = function() {
+						task.cancel();
+						prog.value = 0;
+						modal.style.display = "none";
+					};
 				};
+
+				var uid = firebase.auth().currentUser.uid;
+				var db = firebase.database().ref().child("users").child(uid);
+
+				db.child("credits").once("value").then(function(snapshot) {
+					var credits_val = snapshot.val();
+					if(credits_val < cost) {
+						document.getElementById("notice").innerHTML = "Not enough credits";
+					} else {
+						document.getElementById("notice").innerHTML = "";
+						submitbtn.disabled = false;
+					}
+				});
+
 			};
-			submitbtn.disabled = false;
+
+			
 		});
 	</script>
 </body>
