@@ -277,6 +277,7 @@
 									var sbmt = document.getElementById("SubmitBtn");
 									sbmt.addEventListener('click', function(){
 										choice = getTicked();
+										console.log(choice);
 										if(choice.localeCompare("-1")){
 											document.getElementById('id01').style.display='block';
 											// Save the final answer and give coins to the user
