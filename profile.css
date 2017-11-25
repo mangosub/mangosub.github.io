@@ -48,7 +48,7 @@
 .eventinfo{
     float: left; 
     margin-top: 15px; 
-    width: 400px;
+    width: calc(100% - 300px);
 }
 
 div.eventinfo div:first-child {
