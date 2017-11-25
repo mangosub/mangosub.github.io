@@ -7,11 +7,14 @@
 	<link rel="stylesheet" type="text/css" href="nav.css">
 	<link rel="stylesheet" type="text/css" href="convention.css">
 	<link rel="stylesheet" type="text/css" href="instructions.css">
+	<link rel = "stylesheet" type = "text/css" href = "media-player.css">
 	<script type="text/javascript" src = "input_to_sub.js"></script>
 	<script type ="text/javascript" src="jquery.js"></script>
   	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
   	<script type="text/javascript" src = "functions.js"></script>
+  	<script type="text/javascript" src="setBoundingClientRect.js"></script>
+  	<script type="text/javascript" src="media-player.js"></script>
 </head>
 <body>
 	<ul class="nav">
@@ -140,14 +143,32 @@
 <div class = "type_div">
 	<div class="video_div">
 		<div id="slider-range"></div>
-		<h1 class="header_name">House Of Cards S05E02</h1>
+		<h1 class="header_name" id = "video_title"></h1>
 
 		<div class="video_sub" >
-			<video class = "video_style" controls>
-				<source src="videos/you_are_nothing.mp4" type="video/mp4">
-			Your browser does not support the video tag.
+			<video id="video_player" class = "video_style" controls>
+				<source id="video_src" src="" type="video/mp4">
+				Your browser does not support the video tag.
 			</video>
-			<h1 class="sub_text" id = "sub_text_generate">You text will appear here</h1>
+			<h1 class="sub_text" style="color: white" id = "sub_text_generate">Loading video...</h1>
+		</div>
+		<div class="video_controls">
+
+			
+			<div id='media-controls' >
+				<div id="other_controls" style="padding-bottom: 10px">
+					<img src="images/play.png" id='play-pause-button' class='play' title='play' onclick='togglePlayPause();'>
+					<img src="images/volume+.png" id='volume-inc-button' class='volume-plus' title='Increase volume' onclick='changeVolume("+");'>
+					<img src="images/volume-.png" id='volume-dec-button' class='volume-minus' title='Decrease volume' onclick='changeVolume("-");'>
+				</div>
+				<div id="done_and_progress">
+					<div id="progressed_bar" title="Already generated portions."></div>
+					<progress id='progress-bar' min='0' max='100' value='0' title="Progress bar">0% played</progress>
+				</div>
+				
+
+
+			</div>
 		</div>
 		
 		<div class="slider">
@@ -159,22 +180,22 @@
 			<h1 style="font-size: 12px; position: relative; margin-left: 25px">Select the most correct line that corresponds to the videos section.</h1>
 		</div>
 		<div class="sub_show">
-			<input type="text" style = "width: 60%"  class="sub_text_input" id="sub_text_input_generate_1" readonly value="Something is gonna happen">
+			<input type="text" style = "width: 60%"  class="sub_text_input" id="sub_text_input_generate_1" readonly value="">
 			<img id="tick_1" src="images/check_unselected.png" style= 'width : 30px; height: 30px; margin-left: 25px' onclick='select_subs("1")'></img>
 		</div>
 
 		<div class="sub_show">
-			<input type="text"  style = "width: 60%" class="sub_text_input" id="sub_text_input_generate_2" readonly value="Something will happen soon">
+			<input type="text"  style = "width: 60%" class="sub_text_input" id="sub_text_input_generate_2" readonly value="">
 			<img id="tick_2" src="images/check_unselected.png" style= 'width : 30px; height: 30px; margin-left: 25px' onclick='select_subs("2")'></img>
 		</div>
 
 		<div class="sub_show">
-			<input type="text" style = "width: 60%" class="sub_text_input" id="sub_text_input_generate_3" readonly value = "Something is going to happen">
+			<input type="text" style = "width: 60%" class="sub_text_input" id="sub_text_input_generate_3" readonly value = "">
 			<img id="tick_3" src="images/check_unselected.png" style= 'width : 30px; height: 30px; margin-left: 25px' onclick='select_subs("3")'></img>
 		</div>
 		<div class = "div_buttons">
 			<a href="index.html"><button style="margin-right: 50px; width: auto;">Home</button></a>
-			<a ><button onclick="document.getElementById('id01').style.display='block'" style="margin-left: 50px; width: auto;">Submit</button></a>
+			<a ><button style="margin-left: 50px; width: auto;" id  = "SubmitBtn">Submit</button></a>
 		</div>
 		<div id = "id01" class = "modal">
 		  <form class="modal-content animate" action="http://mangosub.com/profile_page">
@@ -192,13 +213,104 @@
 		    </div>
 		  </form>
 		</div>
+		<script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
+		<script>
+			var config = {
+		       apiKey: "AIzaSyDeunaXdZRX8Kc960GDhzik2bpNKwN2lDY",
+		       authDomain: "mangosub-kaist.firebaseapp.com",
+		   	   databaseURL: "https://mangosub-kaist.firebaseio.com",
+		  	   projectId: "mangosub-kaist",
+		   	   storageBucket: "mangosub-kaist.appspot.com",
+		   	   messagingSenderId: "753510490577"
+		    };
+		    firebase.initializeApp(config);
+		    var generated = "-1";
+		    var fix_1 = "-2";
+		    var fix_2 = "-3";
+		    var choice = -1;
+		    var DBref = firebase.database().ref().child("subtitles");
+			DBref.orderByChild("done").once("value").then(function(snapshot){
+				snapshot.forEach(function(video){
+					if (video.val().done === 2){
+						var vid_id = video.key;
+						var sub_times = DBref.child(vid_id).child("sub_times");
+						sub_times.once("value").then(function(intervals){
+							intervals.forEach(function(interval){
+								if (interval.val().fixed === 2){
+									var interval_id = interval.key;
+
+									generated = interval.val().generated;
+									fix_1 = interval.val().fix_1;
+									fix_2 = interval.val().fix_2;
+
+
+									var choice1 = document.getElementById('sub_text_input_generate_1');
+									var choice2 = document.getElementById('sub_text_input_generate_2');
+									var choice3 = document.getElementById('sub_text_input_generate_3');
+									choice1.value = generated;
+									choice2.value = fix_1;
+									choice3.value = fix_2;
+
+									var vid_url = DBref.child(vid_id).child("video_url");
+									vid_url.once('value').then(function(snapshot){
+										var path = snapshot.val();
+										var pathStorage = firebase.storage().refFromURL(path);
+										pathStorage.getDownloadURL().then(function(url){
+											var sub = document.getElementById('sub_text_generate');
+											sub.innerHTML = "";
+											sub.style.color = 'white';
+											var vid = document.getElementById("video_player");
+											vid.src = url;
+											var video_title = document.getElementById("video_title");
+											video_title.value = DBref.child(vid_id).val().video_title;
+											loaded = true;
+										})
+									})
+									var sbmt = document.getElementById("SubmitBtn");
+									sbmt.addEventListener('click', function(){
+										choice = getTicked();
+										if(choice.localeCompare("-1")){
+											document.getElementById('id01').style.display='block';
+											// Save the final answer and give coins to the user
+											var final_sub = "-1";
+											var choiceInt = parseInt(choice);
+											if (choiceInt === 1) final_sub = generated;
+											if (choiceInt === 2) final_sub = fix_1;
+											if (choiceInt === 3) final_sub = fix_2;
+											var s_time = intervalRef.val().s_time;
+											var e_time = intervalRef.val().e_time;
+
+											intervalRef.set({
+												s_time: s_time,
+												e_time: e_time,
+												generated: generated,
+												fix_1: fix_1,
+												fix_2: fix_2,
+												fixed: 2,
+												final_sub: final_sub
+											});
+										}
+										else{
+											alert("You have not chosen anything yet");
+										}
+									});
+									return true; // not sure whether it will work
+								}
+							})
+						})
+						return true;
+					}
+				})
+				alert("There is no video to be verified. Check back later");
+			});
+		</script>
 	</div>
 		<script>
 		  var modal = document.getElementById('id01');
 		  // When the user clicks anywhere outside of the modal, close it
 		  window.onclick = function(event) {
 		      if (event.target == modal) {
-			  window.location.href = 'index.html';
+			  	window.location.href = 'index.html';
 		      }
 		  }
 		</script>
