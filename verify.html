@@ -143,7 +143,7 @@
 <div class = "type_div">
 	<div class="video_div">
 		<div id="slider-range"></div>
-		<h1 class="header_name">House Of Cards S05E02</h1>
+		<h1 class="header_name" id = "video_title"></h1>
 
 		<div class="video_sub" >
 			<video id="video_player" class = "video_style" controls>
@@ -152,23 +152,23 @@
 			</video>
 			<h1 class="sub_text" style="color: white" id = "sub_text_generate">Loading video...</h1>
 		</div>
-			<div class="video_controls">
+		<div class="video_controls">
 
-				
-				<div id='media-controls' >
-					<div id="other_controls" style="padding-bottom: 10px">
-						<img src="images/play.png" id='play-pause-button' class='play' title='play' onclick='togglePlayPause();'>
-						<img src="images/volume+.png" id='volume-inc-button' class='volume-plus' title='Increase volume' onclick='changeVolume("+");'>
-						<img src="images/volume-.png" id='volume-dec-button' class='volume-minus' title='Decrease volume' onclick='changeVolume("-");'>
-					</div>
-					<div id="done_and_progress">
-						<div id="progressed_bar" title="Already generated portions."></div>
-						<progress id='progress-bar' min='0' max='100' value='0' title="Progress bar">0% played</progress>
-					</div>
-					
-
-
+			
+			<div id='media-controls' >
+				<div id="other_controls" style="padding-bottom: 10px">
+					<img src="images/play.png" id='play-pause-button' class='play' title='play' onclick='togglePlayPause();'>
+					<img src="images/volume+.png" id='volume-inc-button' class='volume-plus' title='Increase volume' onclick='changeVolume("+");'>
+					<img src="images/volume-.png" id='volume-dec-button' class='volume-minus' title='Decrease volume' onclick='changeVolume("-");'>
 				</div>
+				<div id="done_and_progress">
+					<div id="progressed_bar" title="Already generated portions."></div>
+					<progress id='progress-bar' min='0' max='100' value='0' title="Progress bar">0% played</progress>
+				</div>
+				
+
+
+			</div>
 		</div>
 		
 		<div class="slider">
@@ -259,10 +259,10 @@
 											var sub = document.getElementById('sub_text_generate');
 											sub.innerHTML = "";
 											sub.style.color = 'white';
-											var vid = document.getElementById("videoo");
+											var vid = document.getElementById("video_player");
 											vid.src = url;
 											var video_title = document.getElementById("video_title");
-											video_title = video.val().video_title;
+											video_title.value = DBref.child(vid_id).val().video_title;
 											loaded = true;
 										})
 									})
