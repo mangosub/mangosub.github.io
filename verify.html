@@ -240,7 +240,7 @@
 							intervals.forEach(function(interval){
 								var numFixes = interval.val().fixed;
 								var interval_id = interval.key;
-								var intervalRef = sub_times.child(interval_id);
+								var intervalRef = DBref.child(vid_id).child("sub_times").child(interval_id);
 								if (numFixes === 2){
 
 									generated = intervalRef.val().generated;
