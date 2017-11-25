@@ -277,7 +277,7 @@
 									var sbmt = document.getElementById("SubmitBtn");
 									sbmt.addEventListener('click', function(){
 										choice = getTicked();
-										console.log(choice);
+										//console.log(choice);
 										if(choice.localeCompare("-1")){
 											document.getElementById('id01').style.display='block';
 											// Save the final answer and give coins to the user
@@ -286,8 +286,8 @@
 											if (choiceInt === 1) final_sub = generated;
 											if (choiceInt === 2) final_sub = fix_1;
 											if (choiceInt === 3) final_sub = fix_2;
-											var s_time = intervalRef.val().s_time;
-											var e_time = intervalRef.val().e_time;
+											var s_time = interval.val().s_time;
+											var e_time = interval.val().e_time;
 
 											intervalRef.set({
 												s_time: s_time,
@@ -296,7 +296,8 @@
 												fix_1: fix_1,
 												fix_2: fix_2,
 												fixed: 2,
-												final_sub: final_sub
+												final_sub: final_sub,
+												verified: 1;
 											});
 										}
 										else{
