@@ -8,6 +8,7 @@
 	<link rel="stylesheet" type="text/css" href="convention.css">
 	<link rel="stylesheet" type="text/css" href="instructions.css">
 	<link rel = "stylesheet" type = "text/css" href = "media-player.css">
+	<script type="text/javascript" src = "input_to_sub.js"></script>
 	<script type ="text/javascript" src="jquery.js"></script>
   	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -224,6 +225,7 @@
 		    };
 		    firebase.initializeApp(config);
 		    var found = false;
+		    var isAllDone = true;
 		    var generated = "-1";
 		    var fix_1 = "-2";
 		    var fix_2 = "-3";
@@ -232,12 +234,13 @@
 			DBref.orderByChild("done").once("value").then(function(snapshot){
 				snapshot.forEach(function(video){
 					if (video.val().done === 2){
-						var isAllDone = true;
+						isAllDone = true;
 						var vid_id = video.key;
 						var sub_times = DBref.child(vid_id).child("sub_times");
 						sub_times.once("value").then(function(intervals){
 							intervals.forEach(function(interval){
-								if (interval.val().verified === null){
+								console.log(interval.val().verified);
+								if (interval.val().verified == null){
 									isAllDone = false;
 									found = true;
 									var interval_id = interval.key;
@@ -245,7 +248,6 @@
 									generated = interval.val().generated;
 									fix_1 = interval.val().fix_1;
 									fix_2 = interval.val().fix_2;
-
 
 									var choice1 = document.getElementById('sub_text_input_generate_1');
 									var choice2 = document.getElementById('sub_text_input_generate_2');
