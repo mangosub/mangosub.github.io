@@ -12,6 +12,7 @@ var fixed_count;
 
 var fix_tex;
 var is_fixed;
+var ticked = "-1";
 
 function tick_click(){
     submit_generate();
@@ -31,7 +32,9 @@ function select_subs(id){
 	document.getElementById("tick_3").src = "images/check_unselected.png";
 
 	document.getElementById("tick_".concat(id)).src = "images/check_selected.png";
+	ticked = id;
 }
+function getTicked(){ return ticked;}
 function generate_sub(){
 	submit_generate();
 }
