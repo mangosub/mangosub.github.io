@@ -194,6 +194,25 @@
 					}
 				});
 
+				var subdb = firebase.database().ref().child("subtitles");
+				subdb.orderByChild("requested_user").equalTo(uid).once("value", function(snapshot) {
+					snapshot.forEach(function(childSnapshot) {
+						var value = childSnapshot.val();
+						if(value.done == 1) {
+							// get subtitles
+							firebase.database().ref("/subtitles/" + childSnapshot.key).update({"done": 2});
+							var userpath = firebase.database().ref("/users/" + uid + "/events/").push();
+							userpath.set({
+								time: firebase.database.ServerValue.TIMESTAMP,
+								type: "receive",
+								description: "Subtitles for your video " + value.video_title + " is available for download.",
+								credits: 0,
+								srt_file: 0 // update this too
+							});
+						}
+					});
+				});
+
 			} else {
 				// User is signed out.
 				window.location = "index.html";
