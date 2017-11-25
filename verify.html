@@ -234,15 +234,18 @@
 					var fixed = video.val().done; // all fixes to the video have been made and we start to verify
 					console.log(fixed);
 					if (fixed === 2){
-						var sub_times = video.child("sub_times");
+						var vid_id = video.key;
+						var sub_times = DBref.child(vid_id).child("sub_times");
 						sub_times.once("value").then(function(intervals){
 							intervals.forEach(function(interval){
 								var numFixes = interval.val().fixed;
+								var interval_id = interval.key;
+								var intervalRef = sub_times.child(interval_id);
 								if (numFixes === 2){
 
-									generated = interval.child("generated").val();
-									fix_1 = interval.child("fix_1").val();
-									fix_2 = interval.child("fix_2").val();
+									generated = intervalRef.val().generated;
+									fix_1 = intervalRef.val().fix_1;
+									fix_2 = intervalRef.val().fix_2;
 
 
 									var choice1 = document.getElementById('sub_text_input_generate_1');
@@ -252,7 +255,7 @@
 									choice2.value = fix_1;
 									choice3.value = fix_2;
 
-									var vid_url = video.child("video_url");
+									var vid_url = DBref.child(vid_id).child("video_url");
 									vid_url.once('value').then(function(snapshot){
 										var path = snapshot.val();
 										var pathStorage = firebase.storage().refFromURL(path);
@@ -278,10 +281,10 @@
 											if (choiceInt === 1) final_sub = generated;
 											if (choiceInt === 2) final_sub = fix_1;
 											if (choiceInt === 3) final_sub = fix_2;
-											var s_time = interval.child('s_time').val();
-											var e_time = interval.child('e_time').val();
+											var s_time = intervalRef.val().s_time;
+											var e_time = intervalRef.val().e_time;
 
-											interval.set({
+											intervalRef.set({
 												s_time: s_time,
 												e_time: e_time,
 												generated: generated,
