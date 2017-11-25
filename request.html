@@ -20,6 +20,14 @@
 		#drop_zone:hover {
 			opacity: 0.8;
 		}
+		progress::-webkit-progress-bar {
+			background: #eee;
+			box-shadow: 0 2px 3px rgba(0,0,0,0.2) inset;
+		}
+
+		progress::-webkit-progress-value {
+			background-color: #990000;
+		}
 	</style>
 	<script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
 	<script>
@@ -88,10 +96,19 @@
 			<div type="file" id="drop_zone" onclick="fileupload.click();">
 				<input type="file" accept="video/*" class="fileupload" id="fileupload" style="display: none;"/>
 				<img src="images/upload.png" style="margin-top: 70px">
-				<p id="filename">Click to choose a video file.</p>
+				<p id="filename">Click to choose a video file</p>
 			</div>
 			<button id = "submitbtn" style="float: right; width: auto; margin-top: 30px;" disabled>SUBMIT</button>
-			<progress value="0" max="100" id = "prog">0%</progress>
+			<div id="id01" class="modal">
+				<div class="modal-content" style="width: 500px;">
+					<div class="container" style="overflow: hidden">
+						<p style="font-size: 18px; color: #990000;" id="status">Uploading Video</p>
+						<p id="description">Please wait</p>
+						<progress class="styled" value="0" max="100" id="prog" style="height: 30px; width: 100%; margin-bottom: 10px;"></progress>
+						<button id="cancelbtn" style="width: auto; float: right;">CANCEL</button>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 
@@ -99,16 +116,18 @@
 	    var prog = document.getElementById('prog');
 	    var fileupload = document.getElementById('fileupload');
 	    var submitbtn = document.getElementById('submitbtn');
+	    var cancelbtn = document.getElementById('cancelbtn');
+		var modal = document.getElementById('id01');
 
 		//listen for file selection
 		fileupload.addEventListener('change', function(e) {
 			var file = e.target.files[0];
-			var storageRef = firebase.storage().ref('/videos/' + file.name);
-			var percentage = 0
+			console.log(e.target.files);
+			var percentage = 0;
 
-			document.getElementById("filename").innerHTML = fileupload.value.split("\\").pop().split("/").pop();
+			document.getElementById("filename").innerHTML = file.name;
 
-			submitbtn.addEventListener('click', function(){
+			submitbtn.onclick = function() {
 				/* task.pause();
 				if (percentage < 100){
 					if (confirm('You have not uploaded your video yet. Do you want to continue?')){
@@ -122,8 +141,12 @@
 				else{
 					location.href = 'index.html';
 				} */
-				storageRef.put(file).on('state_changed',
+				modal.style.display = "block";
+				var storageRef = firebase.storage().ref('/videos/' + file.name);
+				var task = storageRef.put(file);
+				task.on('state_changed',
 					function(snapshot) {
+						console.log(file.name);
 						percentage = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
 						prog.value = percentage;
 					}, function(error) {
@@ -139,13 +162,21 @@
 							video_url: downloadURL,
 							done: 0
 						});
+						document.getElementById("status").innerHTML = "Upload Complete";
+						document.getElementById("description").innerHTML = "You can download the subtitles in the Profile page once available";
+						cancelbtn.innerHTML = "HOME";
+						cancelbtn.onclick = function() {
+							location.href = "index.html";
+						}
 					}
 				);
-			});
+				cancelbtn.onclick = function() {
+					task.cancel();
+					prog.value = 0;
+					modal.style.display = "none";
+				};
+			};
 			submitbtn.disabled = false;
-
-			//Update progress bar
-			
 		});
 	</script>
 </body>
