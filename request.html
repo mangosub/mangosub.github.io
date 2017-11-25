@@ -5,24 +5,40 @@
 	<link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
 	<link rel="stylesheet" type="text/css" href="nav.css">
 	<link rel="stylesheet" type="text/css" href="convention.css">
+	<link rel="stylesheet" type="text/css" href="modal.css">
+	<style>
+		#drop_zone {
+			background-color: lightgray;
+			box-shadow: 0px 0px 0px 10px lightgray;
+			border: 5px dashed white;
+			width: calc(100% - 10px);
+			height: 300px;
+			text-align: center;
+			color: gray;
+			cursor: pointer;
+		}
+		#drop_zone:hover {
+			opacity: 0.8;
+		}
+	</style>
 	<script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
-		<script>
-			// Initialize Firebase
-			var config = {
-				apiKey: "AIzaSyDeunaXdZRX8Kc960GDhzik2bpNKwN2lDY",
-				authDomain: "mangosub-kaist.firebaseapp.com",
-				databaseURL: "https://mangosub-kaist.firebaseio.com",
-				projectId: "mangosub-kaist",
-				storageBucket: "mangosub-kaist.appspot.com",
-				messagingSenderId: "753510490577"
-			};
-			firebase.initializeApp(config);
-			firebase.auth().onAuthStateChanged(function(user) {
-				if (!user) {
-					window.location = "index.html";
-				}
-			});
-		</script>
+	<script>
+		// Initialize Firebase
+		var config = {
+			apiKey: "AIzaSyDeunaXdZRX8Kc960GDhzik2bpNKwN2lDY",
+			authDomain: "mangosub-kaist.firebaseapp.com",
+			databaseURL: "https://mangosub-kaist.firebaseio.com",
+			projectId: "mangosub-kaist",
+			storageBucket: "mangosub-kaist.appspot.com",
+			messagingSenderId: "753510490577"
+		};
+		firebase.initializeApp(config);
+		firebase.auth().onAuthStateChanged(function(user) {
+			if (!user) {
+				window.location = "index.html";
+			}
+		});
+	</script>
 </head>
 <style>
 	#prog{
@@ -68,15 +84,15 @@
 		});
 	</script>
 	<div style="margin-top: 70px; overflow: auto; height: calc(100vh - 70px);">
-		<div style = "margin-top: 100px; margin-left: 200px;">
-			<p style = "height: 70px; width: 600px"><font size = "6">To request subtitles for a video press Browse, select the file and Submit</font></p>
-			<p style = "height: 50px;"><font size = "5">P.S. File size must not exceed 300MB</font></p>
-			<label>
-				<progress value="0" max="100" id = "prog">0%</progress>
-				<input type="file" accept="video/*" class = "fileupload" id="fileupload"> 
-			</label> 
-			<button id = "submitbtn" style="width: auto;">SUBMIT</button>
-	    </div>
+		<div style="width: 800px; margin: 50px auto 0 auto; padding: 10px">
+			<div type="file" id="drop_zone" onclick="fileupload.click();">
+				<input type="file" accept="video/*" class="fileupload" id="fileupload" style="display: none;"/>
+				<img src="images/upload.png" style="margin-top: 70px">
+				<p id="filename">Click to choose a video file.</p>
+			</div>
+			<button id = "submitbtn" style="float: right; width: auto; margin-top: 30px;" disabled>SUBMIT</button>
+			<progress value="0" max="100" id = "prog">0%</progress>
+		</div>
 	</div>
 
 	<script>
@@ -85,14 +101,15 @@
 	    var submitbtn = document.getElementById('submitbtn');
 
 		//listen for file selection
-		fileupload.addEventListener('change', function(e){
+		fileupload.addEventListener('change', function(e) {
 			var file = e.target.files[0];
 			var storageRef = firebase.storage().ref('/videos/' + file.name);
-			var task = storageRef.put(file);
 			var percentage = 0
 
+			document.getElementById("filename").innerHTML = fileupload.value.split("\\").pop().split("/").pop();
+
 			submitbtn.addEventListener('click', function(){
-				task.pause();
+				/* task.pause();
 				if (percentage < 100){
 					if (confirm('You have not uploaded your video yet. Do you want to continue?')){
 						task.resume();
@@ -104,37 +121,31 @@
 				}
 				else{
 					location.href = 'index.html';
-				}
+				} */
+				storageRef.put(file).on('state_changed',
+					function(snapshot) {
+						percentage = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+						prog.value = percentage;
+					}, function(error) {
+
+					}, function() {
+						var uid = firebase.auth().currentUser.uid;
+						var path = firebase.database().ref('subtitles/').push();
+						var downloadURL = task.snapshot.downloadURL;
+						path.set({
+							requested_time: firebase.database.ServerValue.TIMESTAMP,
+							requested_user: uid,
+							video_title: file.name,
+							video_url: downloadURL,
+							done: 0
+						});
+					}
+				);
 			});
+			submitbtn.disabled = false;
+
 			//Update progress bar
-			task.on('state_changed',
-				function(snapshot){
-					percentage = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-					prog.value = percentage;
-				},
-				function(error){
-
-				},
-
-				function(){
-					firebase.auth().onAuthStateChanged(function(user) {
-						if (user) {
-							var uid = user.uid;
-							var path = firebase.database().ref('subtitles/').push();
-							var downloadURL = task.snapshot.downloadURL;
-							path.set({
-								requested_time: firebase.database.ServerValue.TIMESTAMP,
-								requested_user: uid,
-								video_title: file.name,
-								video_url: downloadURL,
-								done: 0
-							});
-						} else {
-							
-						}
-					});
-				}
-			);
+			
 		});
 	</script>
 </body>

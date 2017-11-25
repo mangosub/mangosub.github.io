@@ -19,6 +19,12 @@ button {
 	font-size: 16px;
 	font-family: Lato;
 }
-button:hover {
+button:hover:not(:disabled) {
 	opacity: 0.8;
+}
+
+button:disabled {
+	background-color: lightgray;
+	color: gray;
+	cursor: default;
 }
