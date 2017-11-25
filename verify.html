@@ -16,9 +16,9 @@
   	<script type="text/javascript" src="setBoundingClientRect.js"></script>
   	<script type="text/javascript" src="media-player.js"></script>
 </head>
-<body style="font-family: Lato;">
+<body>
 	<ul class="nav">
-		<li class="logo"><a href="index.html" style="padding: 0px;"><img src="./icons/logo_long.png"/></a></li>
+		<li class="logo"><a href="index.html">MANGOSUB</a></li>
 		<li><a style="display: block; width: 77px;" id="bcredits">$100</a></li>
 		<li><a href="" class="hov" >LOGOUT</a></li>
 		<li><a href="profile.html" class="hov">PROFILE</a></li>
@@ -224,6 +224,7 @@
 		   	   messagingSenderId: "753510490577"
 		    };
 		    firebase.initializeApp(config);
+		    var found = false;
 		    var generated = "-1";
 		    var fix_1 = "-2";
 		    var fix_2 = "-3";
@@ -232,11 +233,14 @@
 			DBref.orderByChild("done").once("value").then(function(snapshot){
 				snapshot.forEach(function(video){
 					if (video.val().done === 2){
+						var isAllDone = true;
 						var vid_id = video.key;
 						var sub_times = DBref.child(vid_id).child("sub_times");
 						sub_times.once("value").then(function(intervals){
 							intervals.forEach(function(interval){
-								if (interval.val().fixed === 2){
+								if (interval.val().verified === null){
+									isAllDone = false;
+									found = true;
 									var interval_id = interval.key;
 
 									generated = interval.val().generated;
@@ -262,7 +266,10 @@
 											var vid = document.getElementById("video_player");
 											vid.src = url;
 											var video_title = document.getElementById("video_title");
-											video_title.value = DBref.child(vid_id).val().video_title;
+											var title_ref = DBref.child(vid_id).child("video_title");
+											title_ref.once("value").then(function(snap){
+												video_title.value = snap.val();
+											});
 											loaded = true;
 										})
 									})
@@ -298,10 +305,13 @@
 								}
 							})
 						})
-						return true;
+						if (found) return true;
+					}
+					if (isAllDone){
+						// set done to 3
 					}
 				})
-				alert("There is no video to be verified. Check back later");
+				if (!found) alert("There is no video to be verified. Check back later");
 			});
 		</script>
 	</div>
