@@ -231,21 +231,17 @@
 		    var DBref = firebase.database().ref().child("subtitles");
 			DBref.orderByChild("done").once("value").then(function(snapshot){
 				snapshot.forEach(function(video){
-					var fixed = video.val().done; // all fixes to the video have been made and we start to verify
-					console.log(fixed);
-					if (fixed === 2){
+					if (video.val().done === 2){
 						var vid_id = video.key;
 						var sub_times = DBref.child(vid_id).child("sub_times");
 						sub_times.once("value").then(function(intervals){
 							intervals.forEach(function(interval){
-								var numFixes = interval.val().fixed;
-								var interval_id = interval.key;
-								var intervalRef = DBref.child(vid_id).child("sub_times").child(interval_id);
-								if (numFixes === 2){
+								if (interval.val().fixed === 2){
+									var interval_id = interval.key;
 
-									generated = intervalRef.val().generated;
-									fix_1 = intervalRef.val().fix_1;
-									fix_2 = intervalRef.val().fix_2;
+									generated = interval.val().generated;
+									fix_1 = interval.val().fix_1;
+									fix_2 = interval.val().fix_2;
 
 
 									var choice1 = document.getElementById('sub_text_input_generate_1');
