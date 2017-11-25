@@ -1,29 +1,18 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>jQuery UI Draggable - Default functionality</title>
-  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-  <link rel="stylesheet" href="/resources/demos/style.css">
-  <style>
-  #draggable { width: 50px; height: 50px; padding: 0.5em; }
-  </style>
-  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-  <script>
-  $( function() {
-    $( "#draggable" ).draggable(
-    	{ axis: "x" });
-  } );
-  </script>
-</head>
-<body>
- 
-<div id="draggable" class="ui-widget-content" style="background-color: #ffffff">
-  <img src="images/start.png">
-</div>
- 
- 
-</body>
+<!DOCTYPE html>
+<html lang='en'>
+   <head>
+      <meta charset='utf-8' />
+      <title>Sample HTML5 Media Player</title>
+      <link href='media-player.css' rel='stylesheet' />
+      <script src='media-player.js'></script>
+      <script type="text/javascript" src="functions.js"></script>
+   </head>
+   <body>
+      <div id='media-player'>
+         <video id='media-video' controls>
+            <source src='you_are_nothing.mp4' type='video/mp4'>
+         </video>
+         <div id='media-controls'></div>
+      </div>
+   </body>
 </html>

@@ -7,12 +7,14 @@
 	<link rel="stylesheet" type="text/css" href="nav.css">
 	<link rel="stylesheet" type="text/css" href="convention.css">
 	<link rel="stylesheet" type="text/css" href="instructions.css">
+	<link rel="stylesheet" type="text/css" href="media-player.css">
 	<script type="text/javascript" src = "input_to_sub.js"></script>
 	<script type ="text/javascript" src="jquery.js"></script>
   	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
   	<script type="text/javascript" src="functions.js"></script>
   	<script type="text/javascript" src="setBoundingClientRect.js"></script>
+  	<script type="text/javascript" src="media-player.js"></script>
 	
 	<style>
 		.submitbtn{
@@ -156,9 +158,26 @@
 					<source id="video_src" src="" type="video/mp4">
 					Your browser does not support the video tag.
 				</video>
-				<h1 class="sub_text" style="color: black" id = "sub_text_generate">Loading video...</h1>
+				<h1 class="sub_text" style="color: white" id = "sub_text_generate">Loading video...</h1>
 			</div>
-			
+				<div class="video_controls">
+
+					
+					<div id='media-controls' >
+						<div id="other_controls" style="padding-bottom: 10px">
+							<img src="images/play.png" id='play-pause-button' class='play' title='play' onclick='togglePlayPause();'>
+							<img src="images/volume+.png" id='volume-inc-button' class='volume-plus' title='Increase volume' onclick='changeVolume("+");'>
+							<img src="images/volume-.png" id='volume-dec-button' class='volume-minus' title='Decrease volume' onclick='changeVolume("-");'>
+						</div>
+						<div id="done_and_progress">
+							<div id="progressed_bar" title="Already generated portions."></div>
+							<progress id='progress-bar' min='0' max='100' value='0' title="Progress bar">0% played</progress>
+						</div>
+						
+
+
+					</div>
+			</div>
 			<div class="slider">
 				<img class = "slider_image" id="start_slider" src="images/start.png">
 				<img class = "slider_image" id="end_slider" src="images/end.png">
@@ -216,27 +235,48 @@
 	  firebase.initializeApp(config);
 
 	  var vid_title = document.getElementById("video_title");
-	  var dbRef = firebase.database().ref().child('subtitles').child('id').child('video_title');
-	  dbRef.once('value', snap => vid_title.innerHTML = snap.val());
+	  //var dbRef = firebase.database().ref().child('subtitles').child('id').child('video_title');
+	  //dbRef.once('value', snap => vid_title.innerHTML = snap.val());
 
 	  // getting video from firebase storage
 	  var storage = firebase.storage();
 	  var pathRef = "";
-	  var vid_url = firebase.database().ref().child('subtitles').child('id').child('video_url');
-	  vid_url.once('value').then(function(snapshot){
-	  	pathRef = snapshot.val();
-	  	pathStorage = storage.refFromURL(pathRef);
-	  	pathStorage.getDownloadURL().then(function(url){
+	  var subDB = firebase.database().ref().child('subtitles');
+	  subDB.orderByChild("done").once("value").then(function(snapshot){
+	  	snapshot.forEach(function(child){
+	  		if (child.val().done === 0) {
+	  				  vid_id = child.key;
+	  				  var vid_url = subDB.child(child.key).child('video_url');
+					  vid_url.once('value').then(function(snap){
+					  	pathRef = snap.val();
+					  	pathStorage = storage.refFromURL(pathRef);
+					  	pathStorage.getDownloadURL().then(function(url){
+					  		var sub = document.getElementById('sub_text_generate');
+					  		sub.innerHTML = "";
+					  		sub.style.color = 'white';
+							var vid = document.getElementById('video_player');
+							vid.src = url;
 
-	  		var sub = document.getElementById('sub_text_generate');
-	  		sub.innerHTML = "You text will appear here";
-	  		sub.style.color = 'white';
-			var vid = document.getElementById('video_player');
-			vid.src = url;
-			//vid.play();
-			loaded = true;
-	  	});
+							//change video title
+							var title_ref = subDB.child(child.key).child("video_title");
+							title_ref.once("value").then(function(tit_name){
+								vid_title.innerHTML = tit_name.val();
+							})
+							//vid.play();
+							load_subtitles();
+							loaded = true;
+					  	});
+				  	  });
+				  	  return true;
+	  		}
+	  		else{
+	  			alert("No video left for creating subtitles. Check back later.");
+	  			return true;
+	  		}
+	  	})
+
 	  });
+
 
 	</script>
 </body>

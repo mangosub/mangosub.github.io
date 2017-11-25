@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<!--
+// Sample Media Player using HTML5's Media API
+// 
+// Ian Devlin (c) 2012
+// http://iandevlin.com
+// http://twitter.com/iandevlin
+//
+// This was written as part of an article for the February 2013 edition of .net magazine (http://netmagazine.com/)
+-->
+<html lang='en'>
+	<head>
+		<meta charset='utf-8' />
+		<title>Sample Media Player using HTML5's Media API</title>
+		<link href='media-player.css' rel='stylesheet' />
+		<script src='media-player.js'></script>
+	</head>
+<body>
+	<h1>Sample Media Player using HTML5's Media API</h1>
+
+	<div id='progressed_bar'>
+	<div id='media-player'>
+		<video id='media-video' controls>
+			<source src='videos/you_are_nothing.mp4' type='video/mp4'>
+		</video>
+		<div id='media-controls'>
+			<progress id='progress-bar' min='0' max='100' value='0'>0% played</progress>
+			<img src="images/play.png" id='play-pause-button' class='play' title='play' onclick='togglePlayPause();'>
+			<img src="images/volume+.png" id='volume-inc-button' class='volume-plus' title='increase volume' onclick='changeVolume("+");'>
+			<img src="images/volume-.png" id='volume-dec-button' class='volume-minus' title='decrease volume' onclick='changeVolume("-");'>
+			</div>
+
+		</div>
+
+	</div>	
+</body>
+</html>
