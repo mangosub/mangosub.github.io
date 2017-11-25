@@ -291,7 +291,7 @@
 											console.log(s_time);
 											console.log(e_time);
 
-											var whereToStore = DBref.database().ref().child("subtitles").child(vid_id).child("sub_times").child(interval_id);
+											var whereToStore = firebase.database().ref().child("subtitles").child(vid_id).child("sub_times").child(interval_id);
 											whereToStore.set({
 												s_time: s_time,
 												e_time: e_time,
