@@ -16,7 +16,7 @@
   	<script type="text/javascript" src="setBoundingClientRect.js"></script>
   	<script type="text/javascript" src="media-player.js"></script>
 </head>
-<body style="font-family: Lato;">
+<body>
 	<ul class="nav">
 		<li class="logo"><a href="index.html">MANGOSUB</a></li>
 		<li><a style="display: block; width: 77px;" id="bcredits">$100</a></li>
@@ -224,6 +224,8 @@
 		   	   messagingSenderId: "753510490577"
 		    };
 		    firebase.initializeApp(config);
+		    var found = false;
+		    var isAllDone = true;
 		    var generated = "-1";
 		    var fix_1 = "-2";
 		    var fix_2 = "-3";
@@ -232,17 +234,20 @@
 			DBref.orderByChild("done").once("value").then(function(snapshot){
 				snapshot.forEach(function(video){
 					if (video.val().done === 2){
+						isAllDone = true;
 						var vid_id = video.key;
 						var sub_times = DBref.child(vid_id).child("sub_times");
 						sub_times.once("value").then(function(intervals){
 							intervals.forEach(function(interval){
-								if (interval.val().fixed === 2){
+								console.log(interval.val().verified);
+								if (interval.val().verified == null){
+									isAllDone = false;
+									found = true;
 									var interval_id = interval.key;
 
 									generated = interval.val().generated;
 									fix_1 = interval.val().fix_1;
 									fix_2 = interval.val().fix_2;
-
 
 									var choice1 = document.getElementById('sub_text_input_generate_1');
 									var choice2 = document.getElementById('sub_text_input_generate_2');
@@ -262,13 +267,17 @@
 											var vid = document.getElementById("video_player");
 											vid.src = url;
 											var video_title = document.getElementById("video_title");
-											video_title.value = DBref.child(vid_id).val().video_title;
+											var title_ref = DBref.child(vid_id).child("video_title");
+											title_ref.once("value").then(function(snap){
+												video_title.value = snap.val();
+											});
 											loaded = true;
 										})
 									})
 									var sbmt = document.getElementById("SubmitBtn");
 									sbmt.addEventListener('click', function(){
 										choice = getTicked();
+										//console.log(choice);
 										if(choice.localeCompare("-1")){
 											document.getElementById('id01').style.display='block';
 											// Save the final answer and give coins to the user
@@ -277,17 +286,21 @@
 											if (choiceInt === 1) final_sub = generated;
 											if (choiceInt === 2) final_sub = fix_1;
 											if (choiceInt === 3) final_sub = fix_2;
-											var s_time = intervalRef.val().s_time;
-											var e_time = intervalRef.val().e_time;
+											var s_time = interval.val().s_time;
+											var e_time = interval.val().e_time;
+											console.log(s_time);
+											console.log(e_time);
 
-											intervalRef.set({
+											var whereToStore = firebase.database().ref().child("subtitles").child(vid_id).child("sub_times").child(interval_id);
+											whereToStore.set({
 												s_time: s_time,
 												e_time: e_time,
 												generated: generated,
 												fix_1: fix_1,
 												fix_2: fix_2,
 												fixed: 2,
-												final_sub: final_sub
+												final_sub: final_sub,
+												verified: 1
 											});
 										}
 										else{
@@ -298,11 +311,14 @@
 								}
 							})
 						})
-						return true;
+						if (found) return true;
+					}
+					if (isAllDone){
+						// set done to 3
 					}
 				})
-				alert("There is no video to be verified. Check back later");
 			});
+			if (!found) alert("There is no video to be verified. Check back later");
 		</script>
 	</div>
 		<script>
