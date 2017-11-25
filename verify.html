@@ -288,8 +288,11 @@
 											if (choiceInt === 3) final_sub = fix_2;
 											var s_time = interval.val().s_time;
 											var e_time = interval.val().e_time;
+											console.log(s_time);
+											console.log(e_time);
 
-											intervalRef.set({
+											var whereToStore = DBref.database().ref().child("subtitles").child(vid_id).child("sub_times").child(interval_id);
+											whereToStore.set({
 												s_time: s_time,
 												e_time: e_time,
 												generated: generated,
