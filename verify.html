@@ -143,7 +143,7 @@
 		<h1 class="header_name">House Of Cards S05E02</h1>
 
 		<div class="video_sub" >
-			<video class = "video_style" controls>
+			<video class = "video_style" id = "videoo" controls>
 				<source src="videos/you_are_nothing.mp4" type="video/mp4">
 			Your browser does not support the video tag.
 			</video>
@@ -174,7 +174,7 @@
 		</div>
 		<div class = "div_buttons">
 			<a href="index.html"><button style="margin-right: 50px; width: auto;">Home</button></a>
-			<a ><button onclick="document.getElementById('id01').style.display='block'" style="margin-left: 50px; width: auto;">Submit</button></a>
+			<a ><button style="margin-left: 50px; width: auto;" id  = "SubmitBtn">Submit</button></a>
 		</div>
 		<div id = "id01" class = "modal">
 		  <form class="modal-content animate" action="http://mangosub.com/profile_page">
@@ -192,13 +192,106 @@
 		    </div>
 		  </form>
 		</div>
+		<script>
+			var config = {
+		       apiKey: "AIzaSyDeunaXdZRX8Kc960GDhzik2bpNKwN2lDY",
+		       authDomain: "mangosub-kaist.firebaseapp.com",
+		   	   databaseURL: "https://mangosub-kaist.firebaseio.com",
+		  	   projectId: "mangosub-kaist",
+		   	   storageBucket: "mangosub-kaist.appspot.com",
+		   	   messagingSenderId: "753510490577"
+		    };
+		    firebase.initializeApp(config);
+		    var generated = "-1";
+		    var fix_1 = "-2";
+		    var fix_2 = "-3";
+		    var choice = -1;
+		    var DBref = firebase.database().ref().child("subtitles");
+			DBref.orderByChild("done").once("value").then(function(snapshot){
+				snapshot.forEach((video)=>{
+					var fixed = video.child("done").val(); // all fixes to the video have been made and we start to verify
+					if (fixed === 2){
+						var sub_times = video.child("sub_times");
+						sub_times.once("value").then(function(intervals){
+							intervals.forEach((interval)=>{
+								var numFixes = interval.child("fixed").val();
+								if (numFixes === 2){
+									generated = interval.child("generated").val();
+									fix_1 = interval.child("fix_1").val();
+									fix_2 = interval.child("fix_2").val();
+
+
+									var choice1 = document.getElementById('sub_text_input_generate_1');
+									var choice2 = document.getElementById('sub_text_input_generate_2');
+									var choice3 = document.getElementById('sub_text_input_generate_3');
+									choice1.value = generated;
+									choice2.value = fix_1;
+									choice3.value = fix_2;
+
+									var vid_url = video.child("video_url");
+									vid_url.once('value').then(function(snapshot){
+										var path = snapshot.val();
+										var pathStorage = firebase.storage().refFromURL(path);
+										pathStorage.getDownloadURL().then(function(url){
+											var sub = document.getElementById('sub_text_generate');
+											sub.innerHTML = "";
+											sub.style.color = 'white';
+											var vid = document.getElementById("videoo");
+											vid.src = url;
+											var video_title = document.getElementById("video_title");
+											video_title = video.child("video_title").val();
+											loaded = true;
+
+										})
+									})
+									var sbmt = document.getElementById("SubmitBtn");
+									sbmt.addEventListener('click', function(){
+										choice = getTicked();
+										if(choice.localeCompare("-1")){
+											document.getElementById('id01').style.display='block';
+											// Save the final answer and give coins to the user
+											var final_sub = "-1";
+											var choiceInt = parseInt(choice);
+											if (choiceInt === 1) final_sub = generated;
+											if (choiceInt === 2) final_sub = fix_1;
+											if (choiceInt === 3) final_sub = fix_2;
+											var s_time = interval.child('s_time').val();
+											var e_time = interval.child('e_time').val();
+
+											interval.set({
+												s_time: s_time,
+												e_time: e_time;
+												generated: generated,
+												fix_1: fix_1,
+												fix_2: fix_2,
+												fixed: 2,
+												final_sub: final_sub
+											});
+										}
+										else{
+											alert("You have not chosen anything yet");
+										}
+									});
+									return true; // not sure whether it will work
+								}
+							})
+						})
+						return true;
+					}
+					else{
+						alert("There is no video to be verified");
+						return true;
+					}
+				})
+			});
+		</script>
 	</div>
 		<script>
 		  var modal = document.getElementById('id01');
 		  // When the user clicks anywhere outside of the modal, close it
 		  window.onclick = function(event) {
 		      if (event.target == modal) {
-			  window.location.href = 'index.html';
+			  	window.location.href = 'index.html';
 		      }
 		  }
 		</script>
