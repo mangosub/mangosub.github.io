@@ -170,7 +170,7 @@
 				} else {
 					firebase.auth().createUserWithEmailAndPassword(email, password).then(function(user) {
 						user.updateProfile({displayName: username});
-
+						done = 0;
 						var db = firebase.database().ref().child("users").child(user.uid);
 						db.set({
 							username: username,
@@ -178,7 +178,12 @@
 							score: 0,
 							generate: 0,
 							fix: 0,
-							verify: 0,
+							verify: 0
+						}, function(error) {
+							done++;
+							if(done == 2) {
+								location.href = "profile.html";
+							}
 						});
 
 						var uid = user.uid;
@@ -188,10 +193,13 @@
 							type: "register",
 							description: "Your account was created.",
 							credits: 500
+						}, function(error) {
+							done++;
+							if(done == 2) {
+								location.href = "profile.html";
+							}
 						});
 
-						modal.style.display = "none";
-						location.href = "profile.html";
 					}).catch(function(error) {
 						var errorCode = error.code;
 						var errorMessage = error.message;

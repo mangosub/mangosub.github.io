@@ -193,7 +193,7 @@
 							if(eventcred == 0) {
 								creditdiv.className = "download";
 								var downloadele = document.createElement("a");
-								downloadele.href = "";												// set this as subtitle file
+								downloadele.href = value.srt_file;
 								creditdiv.appendChild(downloadele);
 							} else {
 								var creditext;
@@ -265,7 +265,6 @@
 					snapshot.forEach(function(childSnapshot) {
 						var value = childSnapshot.val();
 						if(value.done == 3) {
-							// get subtitles
 							firebase.database().ref("/subtitles/" + childSnapshot.key).update({"done": 4});
 							var userpath = firebase.database().ref("/users/" + uid + "/events/").push();
 							userpath.set({
@@ -273,7 +272,7 @@
 								type: "receive",
 								description: "Subtitles for your video " + value.video_title + " is available for download.",
 								credits: 0,
-								srt_file: 0 // update this too
+								srt_file: value.srt_url
 							});
 						}
 					});
