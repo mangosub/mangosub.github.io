@@ -77,9 +77,10 @@ function changeVolume(direction) {
 // Update the progress bar
 function updateProgressBar() {
 	// Work out how much of the media has played via the duration and currentTime parameters
-	var percentage = Math.floor((100 / mediaPlayer.duration) * mediaPlayer.currentTime);
+	var percentage = (100 / mediaPlayer.duration) * mediaPlayer.currentTime;
 	// Update the progress bar's value
 	progressBar.value = percentage;
+	console.log(progressBar.value);
 	// Update the progress bar's text (for browsers that don't support the progress element)
 	progressBar.innerHTML = percentage + '% played';
 
