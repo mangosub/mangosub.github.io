@@ -168,6 +168,7 @@
 				var email = user.email;
 				var uid = user.uid;
 
+				user_uid = uid;
 				var db = firebase.database().ref().child("users").child(uid);
 
 				db.child("credits").once("value").then(function(snapshot) {
