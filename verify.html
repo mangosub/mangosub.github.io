@@ -267,7 +267,7 @@
 											var vid = document.getElementById("video_player");
 											vid.src = url;
 											var video_title = document.getElementById("video_title");
-											var title_ref = firebase.database().child("subtitles").child(vid_id).child("video_title");
+											var title_ref = firebase.database().ref().child("subtitles").child(vid_id).child("video_title");
 											title_ref.once("value").then(function(snap){
 												video_title.value = snap.val();
 											});
@@ -302,6 +302,20 @@
 												final_sub: final_sub,
 												verified: 1
 											});
+
+											var uid = firebase.auth().currentUser.uid;
+											var userpath = firebase.database().ref("/users/" + uid + "/events/").push();
+											userpath.set({
+												time: firebase.database.ServerValue.TIMESTAMP,
+												type: "work",
+												description: "You received 2 credits for completing a VERIFY task.",
+												credits: 2
+											});
+											var db = firebase.database().ref().child("users").child(uid);
+											db.child("credits").once("value").then(function(snapshot) {
+												var credits_val = snapshot.val();
+												firebase.database().ref("/users/" + uid).update({"credits": credits_val + 2});
+											});
 										}
 										else{
 											alert("You have not chosen anything yet");
@@ -332,7 +346,7 @@
 					}
 				})
 			});
-			if (!found) alert("There is no video to be verified. Check back later");
+			//if (!found) alert("There is no video to be verified. Check back later");
 		</script>
 	</div>
 		<script>
