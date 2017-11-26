@@ -242,7 +242,7 @@
 						sub_times.once("value").then(function(intervals){
 							intervals.forEach(function(interval){
 								console.log(interval.val().verified);
-								if (interval.val().verified == null){
+								if (interval.val().verified == null && interval.val().fixed == 2){
 									isAllDone = false;
 									found = true;
 									var interval_id = interval.key;
