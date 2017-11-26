@@ -268,7 +268,7 @@
 	  var subDB = firebase.database().ref().child('subtitles');
 	  subDB.orderByChild("done").once("value").then(function(snapshot){
 	  	snapshot.forEach(function(child){
-	  		if (child.val().done === 0) {
+	  		if (child.child("done").val() === 0) {
 	  				  vid_id = child.key;
 	  				  var vid_url = subDB.child(child.key).child('video_url');
 					  vid_url.once('value').then(function(snap){
