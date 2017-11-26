@@ -19,14 +19,44 @@
 <body>
 	<ul class="nav">
 		<li class="logo"><a href="index.html">MANGOSUB</a></li>
-		<li><a style="display: block; width: 77px;" id="bcredits">$100</a></li>
+		<li><a style="display: block; width: 77px;" id="bcredits"></a></li>
 		<li><a href="" class="hov" >LOGOUT</a></li>
 		<li><a href="profile.html" class="hov">PROFILE</a></li>
 		<li><a href="generate_info.html" class="hov active">WORK</a></li>
 		<li><a href="request.html" class="hov">REQUEST</a></li>
 		<li><a href="index.html" class="hov">ABOUT</a></li>
 	</ul>
-	
+	<script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
+	<script>
+		// Initialize Firebase
+		var config = {
+			apiKey: "AIzaSyDeunaXdZRX8Kc960GDhzik2bpNKwN2lDY",
+			authDomain: "mangosub-kaist.firebaseapp.com",
+			databaseURL: "https://mangosub-kaist.firebaseio.com",
+			projectId: "mangosub-kaist",
+			storageBucket: "mangosub-kaist.appspot.com",
+			messagingSenderId: "753510490577"
+		};
+		firebase.initializeApp(config);
+		firebase.auth().onAuthStateChanged(function(user) {
+			if (user) {
+				// User is signed in.
+				var displayName = user.displayName;
+				var email = user.email;
+				var uid = user.uid;
+
+				var db = firebase.database().ref().child("users").child(uid);
+
+				db.child("credits").once("value").then(function(snapshot) {
+					var credits_val = snapshot.val();
+					document.getElementById("bcredits").innerHTML = "₡ " + String(credits_val);
+				});
+			} else {
+				// User is signed out.
+				window.location = "index.html";
+			}
+		});
+	</script>
 	<style>
 		form {
 		    border: 3px solid #f1f1f1;
@@ -213,17 +243,7 @@
 		    </div>
 		  </form>
 		</div>
-		<script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
 		<script>
-			var config = {
-		       apiKey: "AIzaSyDeunaXdZRX8Kc960GDhzik2bpNKwN2lDY",
-		       authDomain: "mangosub-kaist.firebaseapp.com",
-		   	   databaseURL: "https://mangosub-kaist.firebaseio.com",
-		  	   projectId: "mangosub-kaist",
-		   	   storageBucket: "mangosub-kaist.appspot.com",
-		   	   messagingSenderId: "753510490577"
-		    };
-		    firebase.initializeApp(config);
 		    var found = false;
 		    var isAllDone = true;
 		    var generated = "-1";
@@ -234,14 +254,12 @@
 			DBref.orderByChild("done").once("value").then(function(snapshot){
 				snapshot.forEach(function(video){
 					if (video.val().done === 2){
-						isAllDone = true;
 						var vid_id = video.key;
 						var sub_times = DBref.child(vid_id).child("sub_times");
-						sub_times.once("value").then(function(intervals){
+						sub_times.orderByChild("verified").once("value").then(function(intervals){
 							intervals.forEach(function(interval){
 								console.log(interval.val().verified);
-								if (interval.val().verified == null){
-									isAllDone = false;
+								if (interval.val().verified == null && interval.val().fixed == 2){
 									found = true;
 									var interval_id = interval.key;
 
@@ -267,11 +285,12 @@
 											var vid = document.getElementById("video_player");
 											vid.src = url;
 											var video_title = document.getElementById("video_title");
-											var title_ref = DBref.child(vid_id).child("video_title");
+											var title_ref = firebase.database().ref().child("subtitles").child(vid_id).child("video_title");
 											title_ref.once("value").then(function(snap){
 												video_title.value = snap.val();
 											});
 											loaded = true;
+											load_subtitles();
 										})
 									})
 									var sbmt = document.getElementById("SubmitBtn");
@@ -302,6 +321,20 @@
 												final_sub: final_sub,
 												verified: 1
 											});
+
+											var uid = firebase.auth().currentUser.uid;
+											var userpath = firebase.database().ref("/users/" + uid + "/events/").push();
+											userpath.set({
+												time: firebase.database.ServerValue.TIMESTAMP,
+												type: "work",
+												description: "You received 2 credits for completing a VERIFY task.",
+												credits: 2
+											});
+											var db = firebase.database().ref().child("users").child(uid);
+											db.child("credits").once("value").then(function(snapshot) {
+												var credits_val = snapshot.val();
+												firebase.database().ref("/users/" + uid).update({"credits": credits_val + 2});
+											});
 										}
 										else{
 											alert("You have not chosen anything yet");
@@ -309,16 +342,26 @@
 									});
 									return true; // not sure whether it will work
 								}
+								else{
+									var requested_time = video.val().requested_time;
+									var requested_user = video.val().requested_user;
+									var vid_title = video.val().video_title;
+									var vid_url = video.val().video_url;
+
+									firebase.database().ref().child("subtitles").child(vid_id).once("value").then(function(snapshot){
+										var isDone = snapshot.val();
+										firebase.database().ref("/subtitles/" + vid_id).update({"done" : 3});
+									});
+									return true;
+									// set done to 3
+								}
 							})
 						})
 						if (found) return true;
 					}
-					if (isAllDone){
-						// set done to 3
-					}
 				})
 			});
-			if (!found) alert("There is no video to be verified. Check back later");
+			//if (!found) alert("There is no video to be verified. Check back later");
 		</script>
 	</div>
 		<script>

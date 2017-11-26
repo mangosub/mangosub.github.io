@@ -75,8 +75,8 @@
 		</div>
 		<div class="middle">
 			<p style="text-align: center; color: white; font-size: 32px; line-height: 16px; margin-bottom: 29px;">HISTORY</p>
-			<div class="" style=" height: calc(100% - 147px); overflow: auto; display: block; width: 100%;">
-				
+			<div id="anthropology" style=" height: calc(100% - 147px); overflow: auto; display: block; width: 100%;">
+				<!--
 				<div class="event">
 					<div class="icon">
 						<img class= "eventtype" src="./icons/large/icons_large_work.png"/>
@@ -127,7 +127,7 @@
 						<a href="">DOWNLOAD</a>
 					</div>
 				</div>
-
+				-->
 
 			</div>
 		</div>
@@ -146,14 +146,80 @@
 
 				var db = firebase.database().ref().child("users");
 
-				db.child(uid).once("value").then(function(snapshot) {
+				db.child(uid).on("value", function(snapshot) {
 					var value = snapshot.val();
 					document.getElementById("bcredits").innerHTML = "₡ " + String(value.credits);
 					document.getElementById("score").innerHTML = String(value.score);
 					document.getElementById("generate").innerHTML = String(value.generate);
 					document.getElementById("fix").innerHTML = String(value.fix);
 					document.getElementById("verify").innerHTML = String(value.verify);
-					console.log(snapshot.events == null);
+					console.log(value.events);
+					var yodb = firebase.database().ref().child("users").child(uid).child("events");
+					yodb.orderByChild("time").once("value", function(snapshot2) {
+						snapshot2.forEach(function(childSnapshot) {
+							var value = childSnapshot.val();
+							var eventtime = value.time;
+							var eventcred = value.credits;
+							var eventdesc = value.description;
+							var eventtype = value.type;
+
+							var eventdiv = document.createElement("div");
+							eventdiv.className = "event";
+							var icondiv = document.createElement("div");
+							icondiv.className = "icon";
+							var eventtypediv = document.createElement("img");
+							eventtypediv.className = "eventtype";
+							if(eventtype == "register") {
+								eventtypediv.src = "./icons/large/icons_large_register.png";
+							} else if(eventtype == "request") {
+								eventtypediv.src = "./icons/large/icons_large_upload.png";
+							} else if(eventtype == "work") {
+								eventtypediv.src = "./icons/large/icons_large_work.png";
+							} else if(eventtype == "receive") {
+								eventtypediv.src = "./icons/large/icons_large_download.png";
+							}
+							icondiv.appendChild(eventtypediv);
+							var infodiv = document.createElement("div");
+							infodiv.className = "eventinfo";
+							var firstdiv = document.createElement("div");
+							var firsttex = document.createTextNode((new Date(eventtime)).toDateString());
+							firstdiv.appendChild(firsttex);
+							var secondiv = document.createElement("div");
+							var secondex = document.createTextNode(eventdesc);
+							secondiv.appendChild(secondex);
+							infodiv.appendChild(firstdiv);
+							infodiv.appendChild(secondiv);
+							var creditdiv = document.createElement("div");
+							if(eventcred == 0) {
+								creditdiv.className = "download";
+								var downloadele = document.createElement("a");
+								downloadele.href = value.srt_file;
+								creditdiv.appendChild(downloadele);
+							} else {
+								var creditext;
+								var yocred = document.createElement("img");
+								if(eventcred > 0) {
+									creditdiv.className = "addcredit";
+									creditext = document.createTextNode("+" + String(eventcred));
+									yocred.src = "./icons/small/icons_small_credit_green.png";
+									yocred.className = "m24k";
+								} else {
+									creditdiv.className = "subcredit";
+									creditext = document.createTextNode("-" + String(-eventcred));
+									yocred.src = "./icons/small/icons_small_credit_red.png";
+									yocred.className = "m24k";
+								}
+								creditdiv.appendChild(creditext);
+								creditdiv.appendChild(yocred);
+							}
+
+							eventdiv.appendChild(icondiv);
+							eventdiv.appendChild(infodiv);
+							eventdiv.appendChild(creditdiv);
+							document.getElementById("anthropology").prepend(eventdiv);
+						});
+					});
+
 				});
 
 				db.orderByChild("score").once("value").then(function(snapshot) {
@@ -199,7 +265,6 @@
 					snapshot.forEach(function(childSnapshot) {
 						var value = childSnapshot.val();
 						if(value.done == 3) {
-							// get subtitles
 							firebase.database().ref("/subtitles/" + childSnapshot.key).update({"done": 4});
 							var userpath = firebase.database().ref("/users/" + uid + "/events/").push();
 							userpath.set({
@@ -207,11 +272,12 @@
 								type: "receive",
 								description: "Subtitles for your video " + value.video_title + " is available for download.",
 								credits: 0,
-								srt_file: 0 // update this too
+								srt_file: value.srt_url
 							});
 						}
 					});
 				});
+
 
 			} else {
 				// User is signed out.
