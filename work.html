@@ -1,23 +1,67 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta http-equiv="refresh" content="0; url=generate_info.html/" />
 	<title></title>
-	<link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
-	<link rel="stylesheet" type="text/css" href="nav.css">
-	<link rel="stylesheet" type="text/css" href="profile.css">
 </head>
 <body>
-	<ul class="nav">
-		<li class="logo"><a href="index.html">MANGOSUB</a></li>
-		<li><a class="placeholder"></a></li>
-		<li><a>$420</a></li>
-		<li><a class="placeholder"></a></li>
-		<li><a href="" class="hov">LOGOUT</a></li>
-		<li><a href="profile.html" class="hov">PROFILE</a></li>
-		<li><a href="work.html" class="hov active">WORK</a></li>
-		<li><a href="request.html" class="hov">REQUEST</a></li>
-		<li><a href="index.html" class="hov">ABOUT</a></li>
-	</ul>
+	<script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
+	<script>
+		// Initialize Firebase
+		var config = {
+			apiKey: "AIzaSyDeunaXdZRX8Kc960GDhzik2bpNKwN2lDY",
+			authDomain: "mangosub-kaist.firebaseapp.com",
+			databaseURL: "https://mangosub-kaist.firebaseio.com",
+			projectId: "mangosub-kaist",
+			storageBucket: "mangosub-kaist.appspot.com",
+			messagingSenderId: "753510490577"
+		};
+		firebase.initializeApp(config);
+		firebase.auth().onAuthStateChanged(function(user) {
+			if (user) {
+				// User is signed in.
+				var displayName = user.displayName;
+				var email = user.email;
+				var uid = user.uid;
+
+				var db = firebase.database().ref().child("users").child(uid);
+
+				db.child("credits").once("value").then(function(snapshot) {
+					var credits_val = snapshot.val();
+					document.getElementById("bcredits").innerHTML = "₡ " + String(credits_val);
+				});
+
+				var subDB = firebase.database().ref().child("subtitles");
+				var f_flag = true;
+			  	subDB.orderByChild("done").once("value").then(function(snapshot){
+		  			snapshot.forEach(function(child){
+				  		var doneValue = child.child("done").val();
+						console.log(doneValue);
+				  		if (doneValue === 0) {
+				  			window.location = "generate_info.html";
+							  	return true;
+				  		}
+				  		else if (doneValue === 1){
+				  			window.location.href = "fix_info.html";
+				  			return true;
+				  		}
+				  		else if (doneValue === 2){
+				  			window.location.href = "verify_info.html";
+				  			return true;
+				  		}
+
+				  		else {
+				  			alert("FIX: No video left for creating subtitles. Check back later.");
+				  			window.location.href = "index.html";
+				  			return true;
+				  		}
+				  	});
+				}); 
+			}
+			else {
+				// User is signed out.
+				window.location = "index.html";
+			}
+		});
+	</script>
 </body>
 </html>
