@@ -62,14 +62,14 @@ function set_slider_limits(){
 function update_times(){
 	var vid = document.getElementById("video_player");
 	var curTime = vid.currentTime;
-	document.getElementById("video_title").innerHTML = curTime;
+	//document.getElementById("video_title").innerHTML = curTime;
 	if (sub_times.length === 0) {
 		document.getElementById("sub_text_generate").innerHTML = "";
 	}
 	for (var i = sub_times.length - 1; i >= 0; i--) {
 		t1 = sub_times[i][0];
 		t2 = sub_times[i][1];
-		//console.log(curTime);
+		console.log(fix_tex, sub_times[i][2],curTime, t1, t2, gs_time, ge_time);
 		if (curTime >= t1 && curTime <= t2) {
 			document.getElementById("sub_text_generate").innerHTML = sub_times[i][2];
 			break;
@@ -78,16 +78,24 @@ function update_times(){
 			document.getElementById("sub_text_generate").innerHTML = "";
 		}
 	}
+	console.log(fix_tex, curTime, gs_time, ge_time);
+
 }
 window.onload = function(){ 
     var main_video = document.getElementById("video_player");
+
 	main_video.ontimeupdate = function() {
 		var curTime = main_video.currentTime;
 
 		update_times();
 
-		if (gs_time !== undefined && curTime >= gs_time && curTime <= ge_time) {
+		if (gen_tex !== undefined && curTime >= gs_time && curTime <= ge_time) {
 			document.getElementById("sub_text_generate").innerHTML = gen_tex;
+		}
+		if (fix_tex !== undefined) {
+			if (curTime >= gs_time && curTime <= ge_time) {
+				document.getElementById("sub_text_generate").innerHTML = fix_tex;
+			}
 		}
 	};
 
@@ -108,6 +116,7 @@ function submit_fix(){
 					"s_time":gs_time,
 					"generated":fb_gen_tex,
 					});
+				check_fix_done();
 				document.getElementById('id01').style.display='block';
 			}
 			else{
@@ -119,6 +128,7 @@ function submit_fix(){
 					"s_time":gs_time,
 					"generated":fb_gen_tex,
 					});
+				check_fix_done();
 				document.getElementById('id01').style.display='block';
 
 			}
@@ -301,6 +311,7 @@ function load_subtitles(){
 			
 		});
 		console.log(sub_times);
+
 		progress_so_far();
 
 	});
@@ -313,13 +324,15 @@ function progress_so_far(){
 
 	var can = document.getElementById("progressed_bar");
 	var ctx = can.getContext("2d");
+	ctx.canvas.width = vlen;
 	for (var i = sub_times.length - 1; i >= 0; i--) {
 		t_s = sub_times[i][0];
 		t_e = sub_times[i][1];
 		console.log(sub_times[i][2], t_s, t_e);
 
 		ctx.fillStyle = "#990000";
-		ctx.fillRect(t_s, 0, (t_e - t_s), 160);
+		console.log("rect", t_s *(vlen/v_dur), 0, (t_e - t_s)*(vlen/v_dur), 160);
+		ctx.fillRect(t_s *(vlen/v_dur), 0, (t_e - t_s)*(vlen/v_dur), 160);
 
 
 			
@@ -345,12 +358,32 @@ function check_generate_done(){
 		}
 		console.log("All portions have been completed\n Setting done=1");
 
-		var update = {};
-		updates['/subtitles/'+vid_id+"done"] = 1;
+		var updates = {};
+		updates['/subtitles/'+vid_id+"/done"] = 1;
 		firebase.database().ref().update(updates);
 	});
 	
 }
 function check_fix_done(){
-
+	console.log("fix done?");
+	var flag = true;
+	var subs = firebase.database().ref().child("subtitles").child(vid_id).child("sub_times");
+	subs.once("value").then(function(snapshot){
+		snapshot.forEach(function(child){
+			console.log(child.child("fixed").val());
+			if (child.child("fixed").val() < 2) {
+				console.log("There are still some fixing work left.", child.child("generated").val());
+				flag = false;
+				return true;
+			}
+		});
+		if (flag) {
+			console.log("All portions have been completed\n Setting done=2");
+			var updates = {};
+			updates['/subtitles/'+ vid_id +"/done"] = 2;
+			firebase.database().ref().update(updates);
+		}
+	});
+	
+	
 }

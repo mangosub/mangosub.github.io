@@ -80,7 +80,6 @@ function updateProgressBar() {
 	var percentage = (100 / mediaPlayer.duration) * mediaPlayer.currentTime;
 	// Update the progress bar's value
 	progressBar.value = percentage;
-	console.log(progressBar.value);
 	// Update the progress bar's text (for browsers that don't support the progress element)
 	progressBar.innerHTML = percentage + '% played';
 

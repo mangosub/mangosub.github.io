@@ -191,7 +191,7 @@
 							<img src="images/volume-.png" id='volume-dec-button' class='volume-minus' title='Decrease volume' onclick='changeVolume("-");'>
 						</div>
 						<div id="done_and_progress">
-							<canvas id="progressed_bar" title="Already generated portions."></canvas>
+							<canvas id="progressed_bar" height="16" title="Already generated portions."></canvas>
 							
 
 							<div id="progress_and_slider" style="position: relative; height: 50px; margin-top: 5px">
@@ -257,10 +257,14 @@
 	  var storage = firebase.storage();
 	  var pathRef = "";
 	  var subDB = firebase.database().ref().child('subtitles');
+	  var f_flag = true;
 	  subDB.orderByChild("done").once("value").then(function(snapshot){
 	  	snapshot.forEach(function(child){
-	  		if (child.val().done === 0) {
+	  		console.log(child.child("done").val());
+	  		if (child.child("done").val() === 1) {
 	  				  vid_id = child.key;
+					  f_flag = false;
+
 	  				  var vid_url = subDB.child(child.key).child('video_url');
 					  vid_url.once('value').then(function(snap){
 					  	pathRef = snap.val();
@@ -281,15 +285,15 @@
 							load_subtitles();
 							loaded = true;
 							random_sub();
+
 					  	});
 				  	  });
 				  	  return true;
-	  		}
-	  		else{
-	  			alert("No video left for creating subtitles. Check back later.");
-	  			return true;
-	  		}
-	  	})
+	  		};
+	  	});
+		if (f_flag) {
+			alert("FIX: No video left for creating subtitles. Check back later.");
+		}
 
 	  });
 
