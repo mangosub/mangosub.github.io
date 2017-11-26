@@ -76,7 +76,7 @@
 		<div class="middle">
 			<p style="text-align: center; color: white; font-size: 32px; line-height: 16px; margin-bottom: 29px;">HISTORY</p>
 			<div id="anthropology" style=" height: calc(100% - 147px); overflow: auto; display: block; width: 100%;">
-				
+				<!--
 				<div class="event">
 					<div class="icon">
 						<img class= "eventtype" src="./icons/large/icons_large_work.png"/>
@@ -127,7 +127,7 @@
 						<a href="">DOWNLOAD</a>
 					</div>
 				</div>
-
+				-->
 
 			</div>
 		</div>
@@ -216,7 +216,7 @@
 							eventdiv.appendChild(icondiv);
 							eventdiv.appendChild(infodiv);
 							eventdiv.appendChild(creditdiv);
-							document.getElementById("anthropology").appendChild(eventdiv);
+							document.getElementById("anthropology").prepend(eventdiv);
 						});
 					});
 

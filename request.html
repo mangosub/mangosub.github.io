@@ -78,13 +78,6 @@
 					var credits_val = snapshot.val();
 					document.getElementById("bcredits").innerHTML = "₡ " + String(credits_val);
 				});
-
-				var offsetRef = firebase.database().ref(".info/serverTimeOffset");
-				offsetRef.once("value", function(snap) {
-					var offset = snap.val();
-					var estimatedServerTimeMs = new Date().getTime() + offset;
-					console.log(String(estimatedServerTimeMs));
-				});
 			} else {
 				// User is signed out.
 				window.location = "index.html";

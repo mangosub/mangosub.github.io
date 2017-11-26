@@ -181,6 +181,15 @@
 							verify: 0,
 						});
 
+						var uid = user.uid;
+						var userpath = firebase.database().ref("/users/" + uid + "/events/").push();
+						userpath.set({
+							time: firebase.database.ServerValue.TIMESTAMP,
+							type: "register",
+							description: "Your account was created.",
+							credits: 500
+						});
+
 						modal.style.display = "none";
 					}).catch(function(error) {
 						var errorCode = error.code;
