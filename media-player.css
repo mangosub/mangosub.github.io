@@ -13,7 +13,7 @@ h1 {
 }
 
 video {
-	border:1px solid #333;
+	border:0px solid #333;
 	background:#000;
 }
 
@@ -50,25 +50,24 @@ img {
 	cursor:pointer;
 	margin-bottom: -2.5px;}
 
-
 progress {
 	color:#fff;
 	font-size:12px;
 	width:100%;
 	height:16px;
 	border:none;
-	margin-right:5px;
+	left: 0;
 	background:#434343;
+	position: absolute;
 }
-progress::-moz-progress-bar { background:#990000; }
+progress::-moz-progress-bar { background:#434343; }
+progress::-webkit-progress-value { background: #434343; }
+
 #progressed_bar {
-	color:#fff;
-	font-size:12px;
 	width:100%;
 	height:16px;
 	border:none;
-	margin-right:5px;
-	background:#434343;
+	background:#888;
 }
 
 

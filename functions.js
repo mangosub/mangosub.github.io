@@ -62,13 +62,14 @@ function set_slider_limits(){
 function update_times(){
 	var vid = document.getElementById("video_player");
 	var curTime = vid.currentTime;
+	document.getElementById("video_title").innerHTML = curTime;
 	if (sub_times.length === 0) {
 		document.getElementById("sub_text_generate").innerHTML = "";
 	}
 	for (var i = sub_times.length - 1; i >= 0; i--) {
 		t1 = sub_times[i][0];
 		t2 = sub_times[i][1];
-		console.log(curTime);
+		//console.log(curTime);
 		if (curTime >= t1 && curTime <= t2) {
 			document.getElementById("sub_text_generate").innerHTML = sub_times[i][2];
 			break;
@@ -141,6 +142,7 @@ function submit(){
 				"e_time": ge_time,
 				"fixed":0,
 				});
+			check_generate_done();
 			document.getElementById('id01').style.display='block';
 		}
 		else{
@@ -170,14 +172,20 @@ function submit_generate(){
 	sx_rel_vid = (start.left - vid.left);
 	ex_rel_vid = (end.right - vid.left);
 
-	console.log(sx_rel_vid);
-	console.log(ex_rel_vid);
+	console.log("vid", vid.left, vid.right, vlen);
+	console.log("start",start.left, start.right, slen);
+	console.log("end",end.left, end.right, elen);
+	console.log("sx_rel_vid",sx_rel_vid);
+	console.log("ex_rel_vid",ex_rel_vid);
 
 
 	if (loaded) {
 		var v_dur = document.getElementById('video_player').duration
 		var s_time = v_dur*sx_rel_vid/vlen;
 		var e_time = v_dur*ex_rel_vid/vlen;
+
+		console.log("v_dur", v_dur);
+		console.log("s_time, e_time",s_time, e_time);
 		if (s_time > e_time) {
 			alert("Starting time should be before ending time.");
 		}
@@ -202,15 +210,15 @@ function submit_generate(){
 
 function gen_in_empty(t1, t2){
 	for (var j = t2 - 1; j >= t1; j--) {
-		console.log(t1);
-		console.log(t2);
+		//console.log(t1);
+		//console.log(t2);
 		for (var i = sub_times.length - 1; i >= 0; i--) {
 			t_s = sub_times[i][0];
 			t_e = sub_times[i][1];
-			console.log(j, t_s, t_e);
+			//console.log(j, t_s, t_e);
 
 			if (j >= t_s && j <= t_e) {
-				console.log("fuck it");
+				console.log("intersects some subtitle");
 				return false;
 			}
 		}
@@ -242,13 +250,14 @@ function random_sub(){
 				text = child.child("generated").val();
 
 				fb_gen_tex = text;
+				gen_tex = text;
 
 				gs_time = child.child("s_time").val();
 				ge_time = child.child("e_time").val();
 
 				if (fixed_count == 1) {
 					fb_fix_1_tex = child.child("fix_1").val();
-				}
+				};
 
 				s_time = child.child("s_time").val();
 				e_time = child.child("e_time").val();
@@ -292,6 +301,56 @@ function load_subtitles(){
 			
 		});
 		console.log(sub_times);
+		progress_so_far();
 
 	});
+}
+function progress_so_far(){
+	
+	var vid = document.getElementById('video_player').getBoundingClientRect();
+	var vlen = vid.right - vid.left;
+	var v_dur = document.getElementById('video_player').duration;
+
+	var can = document.getElementById("progressed_bar");
+	var ctx = can.getContext("2d");
+	for (var i = sub_times.length - 1; i >= 0; i--) {
+		t_s = sub_times[i][0];
+		t_e = sub_times[i][1];
+		console.log(sub_times[i][2], t_s, t_e);
+
+		ctx.fillStyle = "#990000";
+		ctx.fillRect(t_s, 0, (t_e - t_s), 160);
+
+
+			
+
+	}
+}
+
+function check_generate_done(){
+	var all_times = [[0,0]];
+	var subs = firebase.database().ref().child("subtitles").child(vid_id).child("sub_times");
+	subs.orderByChild("s_time").once("value").then(function(snapshot){
+		snapshot.forEach(function(child){
+			all_times.push([child.child("s_time").val(),child.child("e_time").val()]);
+		});
+		var v_dur = document.getElementById("video_player").duration;
+		all_times.push([v_dur, v_dur])
+		console.log(all_times);
+		for (var i = all_times.length - 1; i >= 1; i--) {
+			if ((all_times[i][0] - all_times[i-1][1]) > 2) {
+				console.log("there are some left", all_times[i-1][1], all_times[i][0]);
+				return;
+			}
+		}
+		console.log("All portions have been completed\n Setting done=1");
+
+		var update = {};
+		updates['/subtitles/'+vid_id+"done"] = 1;
+		firebase.database().ref().update(updates);
+	});
+	
+}
+function check_fix_done(){
+
 }

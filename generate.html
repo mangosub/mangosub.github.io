@@ -170,18 +170,24 @@
 							<img src="images/volume-.png" id='volume-dec-button' class='volume-minus' title='Decrease volume' onclick='changeVolume("-");'>
 						</div>
 						<div id="done_and_progress">
-							<div id="progressed_bar" title="Already generated portions."></div>
-							<progress id='progress-bar' min='0' max='100' value='0' title="Progress bar">0% played</progress>
+							<canvas id="progressed_bar" title="Already generated portions."></canvas>
+							
+
+							<div id="progress_and_slider" style="position: relative; height: 50px; margin-top: 5px">
+								<div class="slider">
+									<img class = "slider_image" id="start_slider" src="images/start.png">
+									<img class = "slider_image" id="end_slider" src="images/end.png">
+								</div>
+								<progress id='progress-bar' min='0' max='100' value='0' title="Progress bar">0% played</progress>
+								
+							</div>
 						</div>
 						
 
 
 					</div>
 			</div>
-			<div class="slider">
-				<img class = "slider_image" id="start_slider" src="images/start.png">
-				<img class = "slider_image" id="end_slider" src="images/end.png">
-			</div>
+			
 			<div class="sub_show">
 				<input type="text" class="sub_text_input" id="sub_text_input_generate" style="width: 70%;">
 				<button style= 'margin-left: 25px; width: auto;' onclick='generate_sub()'>Show</button>
