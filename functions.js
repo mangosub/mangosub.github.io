@@ -62,14 +62,14 @@ function set_slider_limits(){
 function update_times(){
 	var vid = document.getElementById("video_player");
 	var curTime = vid.currentTime;
-	document.getElementById("video_title").innerHTML = curTime;
+	//document.getElementById("video_title").innerHTML = curTime;
 	if (sub_times.length === 0) {
 		document.getElementById("sub_text_generate").innerHTML = "";
 	}
 	for (var i = sub_times.length - 1; i >= 0; i--) {
 		t1 = sub_times[i][0];
 		t2 = sub_times[i][1];
-		//console.log(curTime);
+		console.log(fix_tex, sub_times[i][2],curTime, t1, t2, gs_time, ge_time);
 		if (curTime >= t1 && curTime <= t2) {
 			document.getElementById("sub_text_generate").innerHTML = sub_times[i][2];
 			break;
@@ -78,6 +78,8 @@ function update_times(){
 			document.getElementById("sub_text_generate").innerHTML = "";
 		}
 	}
+	console.log(fix_tex, curTime, gs_time, ge_time);
+
 }
 window.onload = function(){ 
     var main_video = document.getElementById("video_player");
@@ -87,8 +89,13 @@ window.onload = function(){
 
 		update_times();
 
-		if (gs_time !== undefined && curTime >= gs_time && curTime <= ge_time) {
+		if (gen_tex !== undefined && curTime >= gs_time && curTime <= ge_time) {
 			document.getElementById("sub_text_generate").innerHTML = gen_tex;
+		}
+		if (fix_tex !== undefined) {
+			if (curTime >= gs_time && curTime <= ge_time) {
+				document.getElementById("sub_text_generate").innerHTML = fix_tex;
+			}
 		}
 	};
 
