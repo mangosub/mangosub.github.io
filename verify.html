@@ -20,7 +20,7 @@
 	<ul class="nav">
 		<li class="logo"><a href="index.html">MANGOSUB</a></li>
 		<li><a style="display: block; width: 77px;" id="bcredits"></a></li>
-		<li><a href="" onclick="firebase.auth().signOut();" class="hov" >LOGOUT</a></li>
+		<li><a href="" class="hov" >LOGOUT</a></li>
 		<li><a href="profile.html" class="hov">PROFILE</a></li>
 		<li><a href="generate_info.html" class="hov active">WORK</a></li>
 		<li><a href="request.html" class="hov">REQUEST</a></li>
@@ -184,7 +184,7 @@
 		</div>
 		<div class="video_controls">
 
-			
+					
 			<div id='media-controls' >
 				<div id="other_controls" style="padding-bottom: 10px">
 					<img src="images/play.png" id='play-pause-button' class='play' title='play' onclick='togglePlayPause();'>
@@ -192,19 +192,22 @@
 					<img src="images/volume-.png" id='volume-dec-button' class='volume-minus' title='Decrease volume' onclick='changeVolume("-");'>
 				</div>
 				<div id="done_and_progress">
-					<div id="progressed_bar" title="Already generated portions."></div>
-					<progress id='progress-bar' min='0' max='100' value='0' title="Progress bar">0% played</progress>
+					<canvas id="progressed_bar" title="Already generated portions."></canvas>
+					
+					<div id="progress_and_slider" style="position: relative; height: 50px; margin-top: 5px">
+						<div style="position: absolute;">
+							<div class="fix_slider">
+								<img class = "fix_slider_image" id="start_slider" src="images/start.png">
+								<img class = "fix_slider_image" id="end_slider" src="images/end.png">
+							</div>
+						</div>
+						<progress id='progress-bar' min='0' max='100' value='0' title="Progress bar">0% played</progress>
+					</div>
 				</div>
 				
 
 
 			</div>
-		</div>
-		
-		<div class="slider">
-			  	
-			<img class = "slider_image" id="start_slider" src="images/start.png">
-			<img class = "slider_image" id="end_slider" src="images/end.png">
 		</div>
 		<div>
 			<h1 style="font-size: 12px; position: relative; margin-left: 25px">Select the most correct line that corresponds to the videos section.</h1>
@@ -244,18 +247,46 @@
 		  </form>
 		</div>
 		<script>
+			function time2string(time){
+				var hours = Math.floor(time / 3600);
+				var minutes = Math.floor((time - hours * 3600) / 60);
+				var seconds = (time - hours * 3600 - minutes * 60).toPrecision(3);
+				var answer="";
+
+				if (hours < 10)
+					answer = answer.concat("0");
+				answer = answer.concat(hours.toString());
+				answer = answer.concat(":");
+
+				if(minutes < 10)
+					answer = answer.concat("0");
+				answer = answer.concat(minutes.toString());
+				answer = answer.concat(":");
+
+				if (seconds < 10)
+					answer = answer.concat("0");
+				answer = answer.concat(seconds.toString());
+				return answer;
+			}
+		</script>
+		<script>
 		    var found = false;
 		    var isAllDone = true;
 		    var generated = "-1";
 		    var fix_1 = "-2";
 		    var fix_2 = "-3";
 		    var choice = -1;
+		    var video_duration = 1.1;
+		    var s = 1.0;
+		    var e = 1.0;
+		    var contentsOfFile = "\n";
+		    var i = 1;
 		    var DBref = firebase.database().ref().child("subtitles");
 			DBref.orderByChild("done").once("value").then(function(snapshot){
 				snapshot.forEach(function(video){
 					if (video.val().done === 2){
-						var vid_id = video.key;
-						var sub_times = DBref.child(vid_id).child("sub_times");
+						var my_video_id = video.key;
+						var sub_times = DBref.child(my_video_id).child("sub_times");
 						sub_times.orderByChild("verified").once("value").then(function(intervals){
 							intervals.forEach(function(interval){
 								console.log(interval.val().verified);
@@ -274,7 +305,7 @@
 									choice2.value = fix_1;
 									choice3.value = fix_2;
 
-									var vid_url = DBref.child(vid_id).child("video_url");
+									var vid_url = DBref.child(my_video_id).child("video_url");
 									vid_url.once('value').then(function(snapshot){
 										var path = snapshot.val();
 										var pathStorage = firebase.storage().refFromURL(path);
@@ -285,12 +316,36 @@
 											var vid = document.getElementById("video_player");
 											vid.src = url;
 											var video_title = document.getElementById("video_title");
-											var title_ref = firebase.database().ref().child("subtitles").child(vid_id).child("video_title");
+											var title_ref = firebase.database().ref().child("subtitles").child(my_video_id).child("video_title");
 											title_ref.once("value").then(function(snap){
 												video_title.value = snap.val();
 											});
 											loaded = true;
-											load_subtitles();
+											//load_subtitles();
+
+											s = interval.val().s_time;
+											e = interval.val().e_time;
+											console.log("e converted is ", time2string(e))
+
+											var my_start = document.getElementById('start_slider').getBoundingClientRect();
+											var my_end = document.getElementById('end_slider').getBoundingClientRect();
+											var my_vid = document.getElementById('video_player').getBoundingClientRect();
+
+
+											var my_vlen = my_vid.right - my_vid.left;
+											var my_slen = my_start.right - my_start.left;
+											var my_elen = my_end.right - my_end.left;
+
+											var video_play = document.getElementById('video_player');
+											video_play.addEventListener("loadedmetadata", function(){
+												video_duration = video_play.duration;
+
+												document.getElementById("start_slider").style.left = s*my_vlen/video_duration +"px";
+												document.getElementById("end_slider").style.left = ((e*my_vlen/video_duration) - my_elen) + "px";
+
+												document.getElementById("start_slider").style.visibility = "visible";
+												document.getElementById("end_slider").style.visibility = "visible";
+											});
 										})
 									})
 									var sbmt = document.getElementById("SubmitBtn");
@@ -310,7 +365,7 @@
 											console.log(s_time);
 											console.log(e_time);
 
-											var whereToStore = firebase.database().ref().child("subtitles").child(vid_id).child("sub_times").child(interval_id);
+											var whereToStore = firebase.database().ref().child("subtitles").child(my_video_id).child("sub_times").child(interval_id);
 											whereToStore.set({
 												s_time: s_time,
 												e_time: e_time,
@@ -340,20 +395,42 @@
 											alert("You have not chosen anything yet");
 										}
 									});
-									return true; // not sure whether it will work
+									return true;
 								}
 								else{
-									var requested_time = video.val().requested_time;
-									var requested_user = video.val().requested_user;
-									var vid_title = video.val().video_title;
-									var vid_url = video.val().video_url;
+									console.log("uploading srt now");
+									var contentsOfFile = "\n";
+									i = 1;
 
-									firebase.database().ref().child("subtitles").child(vid_id).once("value").then(function(snapshot){
-										var isDone = snapshot.val();
-										firebase.database().ref("/subtitles/" + vid_id).update({"done" : 3});
+									firebase.database().ref().child("subtitles").child(my_video_id).child("sub_times").orderByChild("s_time").once("value").then(function(intervals){
+										intervals.forEach(function(interval){
+											contentsOfFile = contentsOfFile.concat(i.toString()+"\n");
+											contentsOfFile = contentsOfFile.concat(time2string(interval.val().s_time));
+											contentsOfFile = contentsOfFile.concat("-->");
+											contentsOfFile = contentsOfFile.concat(time2string(interval.val().e_time) + "\n");
+											contentsOfFile = contentsOfFile.concat(interval.val().final_sub + "\n\n");
+											i+=1;
+											console.log(contentsOfFile);
+										});
+										console.log("printing contents ",contentsOfFile);
+										var storageref = firebase.storage().ref( video.val().video_title + ".srt");
+										var upldTask = storageref.putString(contentsOfFile);
+										upldTask.on('state_changed', 
+											function(snapshot) {
+
+											},
+											function(error){
+
+											},
+											function(){
+												var fileURL = upldTask.snapshot.downloadURL;
+												firebase.database().ref().child("subtitles").child(my_video_id).once("value").then(function(snapshot){
+													firebase.database().ref("/subtitles/" + my_video_id).update({"done" : 3, "srt_url": fileURL});
+												});
+											}
+										);
 									});
 									return true;
-									// set done to 3
 								}
 							})
 						})
@@ -361,7 +438,7 @@
 					}
 				})
 			});
-			//if (!found) alert("There is no video to be verified. Check back later");
+			if (!found) alert("There is no video to be verified. Check back later");
 		</script>
 	</div>
 		<script>
