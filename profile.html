@@ -198,9 +198,9 @@
 				subdb.orderByChild("requested_user").equalTo(uid).once("value", function(snapshot) {
 					snapshot.forEach(function(childSnapshot) {
 						var value = childSnapshot.val();
-						if(value.done == 1) {
+						if(value.done == 3) {
 							// get subtitles
-							firebase.database().ref("/subtitles/" + childSnapshot.key).update({"done": 2});
+							firebase.database().ref("/subtitles/" + childSnapshot.key).update({"done": 4});
 							var userpath = firebase.database().ref("/users/" + uid + "/events/").push();
 							userpath.set({
 								time: firebase.database.ServerValue.TIMESTAMP,
