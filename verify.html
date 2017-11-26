@@ -267,7 +267,7 @@
 											var vid = document.getElementById("video_player");
 											vid.src = url;
 											var video_title = document.getElementById("video_title");
-											var title_ref = DBref.child(vid_id).child("video_title");
+											var title_ref = firebase.database().child("subtitles").child(vid_id).child("video_title");
 											title_ref.once("value").then(function(snap){
 												video_title.value = snap.val();
 											});
@@ -314,6 +314,20 @@
 						if (found) return true;
 					}
 					if (isAllDone){
+						var requested_time = video.val().requested_time;
+						var requested_user = video.val().requested_user;
+						var vid_title = video.val().video_title;
+						var vid_url = video.val().video_url;
+
+						var vid_ref = firebase.database().child("subtitles").child(vid_id);
+
+						vid_ref.set({
+							done: 3,
+							requested_time: requested_time,
+							requested_user: requested_user,
+							video_title: vid_title,
+							video_url: vid_url
+						});
 						// set done to 3
 					}
 				})
