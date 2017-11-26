@@ -153,28 +153,30 @@
 			<h1 class="sub_text" style="color: white" id = "sub_text_generate">Loading video...</h1>
 		</div>
 		<div class="video_controls">
+					<div id='media-controls' >
+						<div id="other_controls" style="padding-bottom: 10px">
+							<img src="images/play.png" id='play-pause-button' class='play' title='play' onclick='togglePlayPause();'>
+							<img src="images/volume+.png" id='volume-inc-button' class='volume-plus' title='Increase volume' onclick='changeVolume("+");'>
+							<img src="images/volume-.png" id='volume-dec-button' class='volume-minus' title='Decrease volume' onclick='changeVolume("-");'>
+						</div>
+						<div id="done_and_progress">
+							<canvas id="progressed_bar" title="Already generated portions."></canvas>
+							
 
-			
-			<div id='media-controls' >
-				<div id="other_controls" style="padding-bottom: 10px">
-					<img src="images/play.png" id='play-pause-button' class='play' title='play' onclick='togglePlayPause();'>
-					<img src="images/volume+.png" id='volume-inc-button' class='volume-plus' title='Increase volume' onclick='changeVolume("+");'>
-					<img src="images/volume-.png" id='volume-dec-button' class='volume-minus' title='Decrease volume' onclick='changeVolume("-");'>
-				</div>
-				<div id="done_and_progress">
-					<div id="progressed_bar" title="Already generated portions."></div>
-					<progress id='progress-bar' min='0' max='100' value='0' title="Progress bar">0% played</progress>
-				</div>
-				
+							<div id="progress_and_slider" style="position: relative; height: 50px; margin-top: 5px">
+								<div style="position: absolute;">
+									<div class="fix_slider">
+										<img class = "fix_slider_image" id="start_slider" src="images/start.png">
+										<img class = "fix_slider_image" id="end_slider" src="images/end.png">
+									</div>
+								</div>
+								<progress id='progress-bar' min='0' max='100' value='0' title="Progress bar">0% played</progress>
+							</div>
+						</div>
+						
 
 
-			</div>
-		</div>
-		
-		<div class="slider">
-			  	
-			<img class = "slider_image" id="start_slider" src="images/start.png">
-			<img class = "slider_image" id="end_slider" src="images/end.png">
+					</div>
 		</div>
 		<div>
 			<h1 style="font-size: 12px; position: relative; margin-left: 25px">Select the most correct line that corresponds to the videos section.</h1>
