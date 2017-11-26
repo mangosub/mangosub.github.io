@@ -325,24 +325,21 @@
 								}
 							})
 						})
+
+						if (isAllDone){
+							var requested_time = video.val().requested_time;
+							var requested_user = video.val().requested_user;
+							var vid_title = video.val().video_title;
+							var vid_url = video.val().video_url;
+
+							firebase.database().ref().child("subtitles").child(vid_id).once("value").then(function(snapshot){
+								var isDone = snapshot.val();
+								firebase.database().ref("/subtitles/" + vid_id).update({"done" : 3});
+							});
+							// set done to 3
+						}
+
 						if (found) return true;
-					}
-					if (isAllDone){
-						var requested_time = video.val().requested_time;
-						var requested_user = video.val().requested_user;
-						var vid_title = video.val().video_title;
-						var vid_url = video.val().video_url;
-
-						var vid_ref = firebase.database().ref().child("subtitles").child(vid_id);
-
-						vid_ref.set({
-							done: 3,
-							requested_time: requested_time,
-							requested_user: requested_user,
-							video_title: vid_title,
-							video_url: vid_url
-						});
-						// set done to 3
 					}
 				})
 			});
