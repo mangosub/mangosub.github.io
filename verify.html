@@ -333,7 +333,7 @@
 						var vid_title = video.val().video_title;
 						var vid_url = video.val().video_url;
 
-						var vid_ref = firebase.database().child("subtitles").child(vid_id);
+						var vid_ref = firebase.database().ref().child("subtitles").child(vid_id);
 
 						vid_ref.set({
 							done: 3,
