@@ -194,6 +194,8 @@
 								creditdiv.className = "download";
 								var downloadele = document.createElement("a");
 								downloadele.href = value.srt_file;
+								var downloadext = document.createTextNode("DOWNLOAD");
+								downloadele.appendChild(downloadext);
 								creditdiv.appendChild(downloadele);
 							} else {
 								var creditext;
