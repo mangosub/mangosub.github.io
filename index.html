@@ -55,7 +55,7 @@
 
 					db.child("credits").once("value").then(function(snapshot) {
 						var credits_val = snapshot.val();
-						document.getElementById("bcredits").innerHTML = "₡ " + String(credits_val);
+						document.getElementById("bcredits").innerHTML = "¢ " + String(credits_val);
 					});
 				} else {
 					// User is signed out.
