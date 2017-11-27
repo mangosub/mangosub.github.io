@@ -282,9 +282,12 @@
 								vid_title.innerHTML = tit_name.val();
 							})
 							//vid.play();
-							load_subtitles();
-							loaded = true;
-							random_sub();
+							vid.onloadedmetadata = function(){
+								load_subtitles();
+								loaded = true;
+								random_sub();
+							};
+							
 
 					  	});
 				  	  });

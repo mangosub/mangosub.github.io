@@ -288,7 +288,9 @@
 								vid_title.innerHTML = tit_name.val();
 							})
 							//vid.play();
-							load_subtitles();
+							vid.onloadedmetadata = function(){
+								load_subtitles();
+							};
 							loaded = true;
 					  	});
 				  	  });
