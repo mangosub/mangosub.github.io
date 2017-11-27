@@ -1,4 +1,4 @@
-# mangosub
+# MangoSub
 is a crowdsourcing platform in which users can request videos to be subtitled. At the same same time they can work on others' requested videos and make subtitles. 
 To generate subtitles we do devided work into three sections: Generate, Fix and Verify. When user upload video, it will be saved in Firebase Storage and video will be available for getting subtitled.
 ### Generate
