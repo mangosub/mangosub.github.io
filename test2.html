@@ -23,9 +23,12 @@
 			credits: 5
 		});
 		var db = firebase.database().ref().child("users").child(uid);
-		db.child("credits").once("value").then(function(snapshot) {
-			var credits_val = snapshot.val();
-			firebase.database().ref("/users/" + uid).update({"credits": credits_val + 5});
+		db.once("value").then(function(snapshot) {
+			var value = snapshot.val();
+			var credits = value.credits;
+			var generate = value.generate;
+			var score = value.score;
+			firebase.database().ref("/users/" + uid).update({"credits": credits + 5, "generate": generate + 1, "score": score + 5});
 		});
 
 		//______________________________________________________________________________________
@@ -38,9 +41,12 @@
 			credits: 3
 		});
 		var db = firebase.database().ref().child("users").child(uid);
-		db.child("credits").once("value").then(function(snapshot) {
-			var credits_val = snapshot.val();
-			firebase.database().ref("/users/" + uid).update({"credits": credits_val + 3});
+		db.once("value").then(function(snapshot) {
+			var value = snapshot.val();
+			var credits = value.credits;
+			var fix = value.fix;
+			var score = value.score;
+			firebase.database().ref("/users/" + uid).update({"credits": credits + 3, "fix": fix + 1, "score": score + 3});
 		});
 
 		//______________________________________________________________________________________
@@ -53,9 +59,12 @@
 			credits: 2
 		});
 		var db = firebase.database().ref().child("users").child(uid);
-		db.child("credits").once("value").then(function(snapshot) {
-			var credits_val = snapshot.val();
-			firebase.database().ref("/users/" + uid).update({"credits": credits_val + 2});
+		db.once("value").then(function(snapshot) {
+			var value = snapshot.val();
+			var credits = value.credits;
+			var verify = value.verify;
+			var score = value.score;
+			firebase.database().ref("/users/" + uid).update({"credits": credits + 2, "verify": verify + 1, "score": score + 2});
 		});
 	</script>
 </head>
