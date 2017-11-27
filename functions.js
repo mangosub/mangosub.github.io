@@ -132,9 +132,12 @@ function submit_fix(){
 					credits: 3
 				});
 				var db = firebase.database().ref().child("users").child(user_uid);
-				db.child("credits").once("value").then(function(snapshot) {
-					var credits_val = snapshot.val();
-					firebase.database().ref("/users/" + user_uid).update({"credits": credits_val + 3});
+				db.once("value").then(function(snapshot) {
+					var value = snapshot.val();
+					var credits = value.credits;
+					var fix = value.fix;
+					var score = value.score;
+					firebase.database().ref("/users/" + user_uid).update({"credits": credits + 3, "fix": fix + 1, "score": score + 3});
 				});
 
 				document.getElementById('id01').style.display='block';
@@ -157,10 +160,14 @@ function submit_fix(){
 					credits: 3
 				});
 				var db = firebase.database().ref().child("users").child(user_uid);
-				db.child("credits").once("value").then(function(snapshot) {
-					var credits_val = snapshot.val();
-					firebase.database().ref("/users/" + user_uid).update({"credits": credits_val + 3});
+				db.once("value").then(function(snapshot) {
+					var value = snapshot.val();
+					var credits = value.credits;
+					var fix = value.fix;
+					var score = value.score;
+					firebase.database().ref("/users/" + user_uid).update({"credits": credits + 3, "fix": fix + 1, "score": score + 3});
 				});
+
 				document.getElementById('id01').style.display='block';
 
 			}
@@ -172,6 +179,23 @@ function submit_fix(){
 	
 
 }
+
+var userpath = firebase.database().ref("/users/" + uid + "/events/").push();
+userpath.set({
+	time: firebase.database.ServerValue.TIMESTAMP,
+	type: "work",
+	description: "You received 5 credits for completing a GENERATE task.",
+	credits: 5
+});
+var db = firebase.database().ref().child("users").child(uid);
+db.once("value").then(function(snapshot) {
+	var value = snapshot.val();
+	var credits = value.credits;
+	var generate = value.generate;
+	var score = value.score;
+	firebase.database().ref("/users/" + uid).update({"credits": credits + 5, "generate": generate + 1, "score": score + 5});
+});
+
 function submit(){
 	var text = document.getElementById("sub_text_input_generate").value;
 	var dbRef = firebase.database().ref().child('subtitles').child(vid_id).child("sub_times");
@@ -193,10 +217,15 @@ function submit(){
 				credits: 5
 			});
 			var db = firebase.database().ref().child("users").child(user_uid);
-			db.child("credits").once("value").then(function(snapshot) {
-				var credits_val = snapshot.val();
-				firebase.database().ref("/users/" + user_uid).update({"credits": credits_val + 5});
+			db.once("value").then(function(snapshot) {
+				var value = snapshot.val();
+				var credits = value.credits;
+				var generate = value.generate;
+				var score = value.score;
+				firebase.database().ref("/users/" + user_uid).update({"credits": credits + 5, "generate": generate + 1, "score": score + 5});
 			});
+
+
 			document.getElementById('id01').style.display='block';
 		}
 		else{
