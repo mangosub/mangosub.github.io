@@ -15,6 +15,7 @@
   	<script type="text/javascript" src = "functions.js"></script>
   	<script type="text/javascript" src="setBoundingClientRect.js"></script>
   	<script type="text/javascript" src="media-player.js"></script>
+  	<script type="text/javascript" src="verify.js"></script>
 </head>
 <body style="font-family: Lato;">
 	<ul class="nav">
@@ -228,7 +229,7 @@
 		</div>
 		<div class = "div_buttons">
 			<a href="index.html"><button style="margin-right: 50px; width: auto;">Home</button></a>
-			<a ><button style="margin-left: 50px; width: auto;" id  = "SubmitBtn">Submit</button></a>
+			<a ><button style="margin-left: 50px; width: auto;" onclick="submit_ver()" id  = "SubmitBtn">Submit</button></a>
 		</div>
 		<div id = "id01" class = "modal">
 		  <form class="modal-content animate" action="http://mangosub.com/profile_page">
@@ -269,178 +270,50 @@
 				return answer;
 			}
 		</script>
-		<script>
-		    var found = false;
-		    var isAllDone = true;
-		    var generated = "-1";
-		    var fix_1 = "-2";
-		    var fix_2 = "-3";
-		    var choice = -1;
-		    var video_duration = 1.1;
-		    var s = 1.0;
-		    var e = 1.0;
-		    var contentsOfFile = "\n";
-		    var i = 1;
-		    var DBref = firebase.database().ref().child("subtitles");
-			DBref.orderByChild("done").once("value").then(function(snapshot){
-				snapshot.forEach(function(video){
-					if (video.val().done === 2){
-						var my_video_id = video.key;
-						var sub_times = DBref.child(my_video_id).child("sub_times");
-						sub_times.orderByChild("verified").once("value").then(function(intervals){
-							intervals.forEach(function(interval){
-								console.log(interval.val().verified);
-								if (interval.val().verified == null && interval.val().fixed == 2){
-									found = true;
-									var interval_id = interval.key;
-
-									generated = interval.val().generated;
-									fix_1 = interval.val().fix_1;
-									fix_2 = interval.val().fix_2;
-
-									var choice1 = document.getElementById('sub_text_input_generate_1');
-									var choice2 = document.getElementById('sub_text_input_generate_2');
-									var choice3 = document.getElementById('sub_text_input_generate_3');
-									choice1.value = generated;
-									choice2.value = fix_1;
-									choice3.value = fix_2;
-
-									var vid_url = DBref.child(my_video_id).child("video_url");
-									vid_url.once('value').then(function(snapshot){
-										var path = snapshot.val();
-										var pathStorage = firebase.storage().refFromURL(path);
-										pathStorage.getDownloadURL().then(function(url){
-											var sub = document.getElementById('sub_text_generate');
-											sub.innerHTML = "";
-											sub.style.color = 'white';
-											var vid = document.getElementById("video_player");
-											vid.src = url;
-											var video_title = document.getElementById("video_title");
-											var title_ref = firebase.database().ref().child("subtitles").child(my_video_id).child("video_title");
-											title_ref.once("value").then(function(snap){
-												video_title.value = snap.val();
-											});
-											loaded = true;
-											//load_subtitles();
-
-											s = interval.val().s_time;
-											e = interval.val().e_time;
-											console.log("e converted is ", time2string(e))
-
-											var my_start = document.getElementById('start_slider').getBoundingClientRect();
-											var my_end = document.getElementById('end_slider').getBoundingClientRect();
-											var my_vid = document.getElementById('video_player').getBoundingClientRect();
-
-
-											var my_vlen = my_vid.right - my_vid.left;
-											var my_slen = my_start.right - my_start.left;
-											var my_elen = my_end.right - my_end.left;
-
-											var video_play = document.getElementById('video_player');
-											video_play.addEventListener("loadedmetadata", function(){
-												video_duration = video_play.duration;
-
-												document.getElementById("start_slider").style.left = s*my_vlen/video_duration +"px";
-												document.getElementById("end_slider").style.left = ((e*my_vlen/video_duration) - my_elen) + "px";
-
-												document.getElementById("start_slider").style.visibility = "visible";
-												document.getElementById("end_slider").style.visibility = "visible";
-											});
-										})
-									})
-									var sbmt = document.getElementById("SubmitBtn");
-									sbmt.addEventListener('click', function(){
-										choice = getTicked();
-										//console.log(choice);
-										if(choice.localeCompare("-1")){
-											document.getElementById('id01').style.display='block';
-											// Save the final answer and give coins to the user
-											var final_sub = "-1";
-											var choiceInt = parseInt(choice);
-											if (choiceInt === 1) final_sub = generated;
-											if (choiceInt === 2) final_sub = fix_1;
-											if (choiceInt === 3) final_sub = fix_2;
-											var s_time = interval.val().s_time;
-											var e_time = interval.val().e_time;
-											console.log(s_time);
-											console.log(e_time);
-
-											var whereToStore = firebase.database().ref().child("subtitles").child(my_video_id).child("sub_times").child(interval_id);
-											whereToStore.set({
-												s_time: s_time,
-												e_time: e_time,
-												generated: generated,
-												fix_1: fix_1,
-												fix_2: fix_2,
-												fixed: 2,
-												final_sub: final_sub,
-												verified: 1
-											});
-
-											var uid = firebase.auth().currentUser.uid;
-											var userpath = firebase.database().ref("/users/" + uid + "/events/").push();
-											userpath.set({
-												time: firebase.database.ServerValue.TIMESTAMP,
-												type: "work",
-												description: "You received 2 credits for completing a VERIFY task.",
-												credits: 2
-											});
-											var db = firebase.database().ref().child("users").child(uid);
-											db.child("credits").once("value").then(function(snapshot) {
-												var credits_val = snapshot.val();
-												firebase.database().ref("/users/" + uid).update({"credits": credits_val + 2});
-											});
-										}
-										else{
-											alert("You have not chosen anything yet");
-										}
-									});
-									return true;
-								}
-								else{
-									console.log("uploading srt now");
-									var contentsOfFile = "\n";
-									i = 1;
-
-									firebase.database().ref().child("subtitles").child(my_video_id).child("sub_times").orderByChild("s_time").once("value").then(function(intervals){
-										intervals.forEach(function(interval){
-											contentsOfFile = contentsOfFile.concat(i.toString()+"\n");
-											contentsOfFile = contentsOfFile.concat(time2string(interval.val().s_time));
-											contentsOfFile = contentsOfFile.concat("-->");
-											contentsOfFile = contentsOfFile.concat(time2string(interval.val().e_time) + "\n");
-											contentsOfFile = contentsOfFile.concat(interval.val().final_sub + "\n\n");
-											i+=1;
-											console.log(contentsOfFile);
-										});
-										console.log("printing contents ",contentsOfFile);
-										var storageref = firebase.storage().ref( video.val().video_title + ".srt");
-										var upldTask = storageref.putString(contentsOfFile);
-										upldTask.on('state_changed', 
-											function(snapshot) {
-
-											},
-											function(error){
-
-											},
-											function(){
-												var fileURL = upldTask.snapshot.downloadURL;
-												firebase.database().ref().child("subtitles").child(my_video_id).once("value").then(function(snapshot){
-													firebase.database().ref("/subtitles/" + my_video_id).update({"done" : 3, "srt_url": fileURL});
-												});
-											}
-										);
-									});
-									return true;
-								}
-							})
-						})
-						if (found) return true;
-					}
-				})
-			});
-			if (!found) alert("There is no video to be verified. Check back later");
-		</script>
 	</div>
+		<script>
+		  var vid_title = document.getElementById("video_title");
+		  //var dbRef = firebase.database().ref().child('subtitles').child('id').child('video_title');
+		  //dbRef.once('value', snap => vid_title.innerHTML = snap.val());
+
+		  // getting video from firebase storage
+		  var storage = firebase.storage();
+		  var pathRef = "";
+		  var subDB = firebase.database().ref().child('subtitles');
+		  subDB.orderByChild("done").once("value").then(function(snapshot){
+		  	snapshot.forEach(function(child){
+		  		if (child.child("done").val() === 2) {
+		  				  vid_id = child.key;
+		  				  var vid_url = subDB.child(child.key).child('video_url');
+						  vid_url.once('value').then(function(snap){
+						  	pathRef = snap.val();
+						  	pathStorage = storage.refFromURL(pathRef);
+						  	pathStorage.getDownloadURL().then(function(url){
+						  		var sub = document.getElementById('sub_text_generate');
+						  		sub.innerHTML = "";
+						  		sub.style.color = 'white';
+								var vid = document.getElementById('video_player');
+								vid.src = url;
+
+								//change video title
+								var title_ref = subDB.child(child.key).child("video_title");
+								title_ref.once("value").then(function(tit_name){
+									vid_title.innerHTML = tit_name.val();
+								})
+								//vid.play();
+								loaded = true;
+								vid.onloadedmetadata = function(){
+									load_sub_verify();
+								};
+								
+						  	});
+					  	  });
+					  	  return true;
+		  		}
+		  	})
+
+		  });
+		</script>
 		<script>
 		  var modal = document.getElementById('id01');
 		  // When the user clicks anywhere outside of the modal, close it
