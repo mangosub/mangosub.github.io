@@ -19,7 +19,3 @@ In the fixing part (fix.html) users will be given the portion of the subtitle an
 Follow generation and fixing, verification also works with the same analogy. Instead of editable input text, now we have three fixed texts which are "generated", "fix_1", "fix_2" values which came from previous sections. In this part user just need to select the subtitle which he thinks is correct one. When user submits his work, we again check if all of the subtitles are verified. If so we set this video as fully subtitled and generate ".srt" file format according to timestampt and the final text from verify stage. Within our verify.html we convert timestamp (in seconds) and text stored in Firebase to ".srt" file format and save it to the Firebase Storage. 
 User then can go to history part of his profile and download ".srt" formatted subtitle of his requested video.
 
-# External References and Libraries
-* Firebase Database
-* Firebase Storage
-* jQuery
