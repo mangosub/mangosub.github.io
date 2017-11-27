@@ -49,17 +49,8 @@ function generate_sub(){
 	submit_generate();
 }
 function random_work() {
-	var x = Math.floor((Math.random() * 3) + 1);
+	location.href = "work.html"
 
-	if (x === 1) {
-		location.href = "generate_info.html"
-	}
-	else if (x === 2) {
-		location.href = "fix_info.html"
-	}
-	else if (x === 3) {
-		location.href = "verify_info.html"
-	}
 }
 function set_slider_limits(){
 	var vid = document.getElementById('video_player');
