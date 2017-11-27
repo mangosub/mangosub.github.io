@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+	<title>Fix info</title>
 	<link rel="stylesheet" type="text/css" href="attributes.css">
 	<link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
 	<link rel="stylesheet" type="text/css" href="nav.css">
@@ -42,7 +42,7 @@
 
 				db.child("credits").once("value").then(function(snapshot) {
 					var credits_val = snapshot.val();
-					document.getElementById("bcredits").innerHTML = "₡ " + String(credits_val);
+					document.getElementById("bcredits").innerHTML = "¢ " + String(credits_val);
 				});
 			} else {
 				// User is signed out.
@@ -68,7 +68,7 @@
 					<p class="paragh" >Modify it in the text box if you feel the need to do so.</p>
 				</li>
 				<li>
-					<p class="paragh" >Move the red cursor to the time at which your written subtitle should exit. It is usually when the next sentence starts.</p>
+					<p class="paragh" >Move the END flag to the time at which your written subtitle should exit. It is usually when the next sentence starts.</p>
 				</li>
 				<li>
 					<p class="paragh" >Submit to move over to the next section of the video.</p>

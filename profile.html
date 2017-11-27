@@ -148,7 +148,7 @@
 
 				db.child(uid).on("value", function(snapshot) {
 					var value = snapshot.val();
-					document.getElementById("bcredits").innerHTML = "₡ " + String(value.credits);
+					document.getElementById("bcredits").innerHTML = "¢ " + String(value.credits);
 					document.getElementById("score").innerHTML = String(value.score);
 					document.getElementById("generate").innerHTML = String(value.generate);
 					document.getElementById("fix").innerHTML = String(value.fix);

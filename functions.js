@@ -17,7 +17,8 @@ var ticked = "-1";
 var fb_gen_tex;
 var fb_fix_1_tex;
 
-var user_uid;;
+var user_uid;
+var ver_tex;
 
 
 
@@ -30,7 +31,8 @@ function tick_click(){
 }
 
 function change_text(id){
-	document.getElementById("sub_text_generate").innerHTML = document.getElementById("sub_text_input_generate".concat(id)).value;
+	//document.getElementById("sub_text_generate").innerHTML = document.getElementById("sub_text_input_generate".concat(id)).value;
+	ver_tex = document.getElementById("sub_text_input_generate".concat(id)).value;
 }
 function change_tick_image(){
 	document.getElementById("tick").src = "images/check_selected.png";
@@ -93,6 +95,11 @@ window.onload = function(){
 		if (fix_tex !== undefined) {
 			if (curTime >= gs_time && curTime <= ge_time) {
 				document.getElementById("sub_text_generate").innerHTML = fix_tex;
+			}
+		}
+		if (ver_tex !== undefined) {
+			if (curTime >= gs_time && curTime <= ge_time) {
+				document.getElementById("sub_text_generate").innerHTML = ver_tex;
 			}
 		}
 	};
@@ -170,22 +177,6 @@ function submit_fix(){
 	
 
 }
-
-var userpath = firebase.database().ref("/users/" + uid + "/events/").push();
-userpath.set({
-	time: firebase.database.ServerValue.TIMESTAMP,
-	type: "work",
-	description: "You received 5 credits for completing a GENERATE task.",
-	credits: 5
-});
-var db = firebase.database().ref().child("users").child(uid);
-db.once("value").then(function(snapshot) {
-	var value = snapshot.val();
-	var credits = value.credits;
-	var generate = value.generate;
-	var score = value.score;
-	firebase.database().ref("/users/" + uid).update({"credits": credits + 5, "generate": generate + 1, "score": score + 5});
-});
 
 function submit(){
 	var text = document.getElementById("sub_text_input_generate").value;
@@ -450,4 +441,104 @@ function check_fix_done(){
 	});
 	
 	
+}
+
+function submit_ver(){
+	var choice = getTicked();
+	//console.log(choice);
+	if(ver_tex !== undefined){
+		document.getElementById('id01').style.display='block';
+		// Save the final answer and give coins to the user
+
+		var updates = {};
+		updates['/subtitles/' + vid_id+"/sub_times/"+ ver_ran_sub+"/final_sub"] = ver_tex;
+		updates['/subtitles/' + vid_id+"/sub_times/"+ ver_ran_sub+"/verified"] = 1;
+
+		firebase.database().ref().update(updates);
+
+		check_verify_done();
+		var uid = firebase.auth().currentUser.uid;
+		var userpath = firebase.database().ref("/users/" + uid + "/events/").push();
+		userpath.set({
+			time: firebase.database.ServerValue.TIMESTAMP,
+			type: "work",
+			description: "You received 2 credits for completing a VERIFY task.",
+			credits: 2
+		});
+		var db = firebase.database().ref().child("users").child(uid);
+		db.once("value").then(function(snapshot) {
+			var value = snapshot.val();
+			var credits = value.credits;
+			var verify = value.verify;
+			var score = value.score;
+			firebase.database().ref("/users/" + uid).update({"credits": credits + 2, "verify": verify + 1, "score": score + 2});
+		});
+
+	}
+	else{
+		alert("You have not chosen anything yet");
+	}
+}
+
+function check_verify_done(){
+	console.log("verified done?");
+	var flag = true;
+	var subs = firebase.database().ref().child("subtitles").child(vid_id).child("sub_times");
+	subs.once("value").then(function(snapshot){
+		snapshot.forEach(function(child){
+			console.log(child.child("verified").val());
+			if (child.child("verified").val() !== 1) {
+				console.log("There are still some verify work left.", child.child("generated").val());
+				flag = false;
+				return true;
+			}
+		});
+		if (flag) {
+			console.log("All portions have been completed\n Setting done=3");
+			var updates = {};
+			updates['/subtitles/'+ vid_id +"/done"] = 3;
+			firebase.database().ref().update(updates);
+
+			upload_srt();
+		}
+	});
+}
+
+function upload_srt(){
+	console.log("uploading srt now");
+	var contentsOfFile = "\n";
+	var i = 1;
+
+	firebase.database().ref().child("subtitles").child(vid_id).child("sub_times").orderByChild("s_time").once("value").then(function(intervals){
+		intervals.forEach(function(interval){
+			contentsOfFile = contentsOfFile.concat(i.toString()+"\n");
+			contentsOfFile = contentsOfFile.concat(time2string(interval.val().s_time));
+			contentsOfFile = contentsOfFile.concat(" --> ");
+			contentsOfFile = contentsOfFile.concat(time2string(interval.val().e_time) + "\n");
+			contentsOfFile = contentsOfFile.concat(interval.val().final_sub + "\n\n");
+			i+=1;
+			console.log(contentsOfFile);
+		});
+		console.log("printing contents ",contentsOfFile);
+		var videoDB = firebase.database().ref().child("subtitles").child(vid_id);
+		videoDB.once("value").then(function(video){
+			var storageref = firebase.storage().ref( video.val().video_title + ".srt");
+			var upldTask = storageref.putString(contentsOfFile);
+			upldTask.on('state_changed', 
+				function(snapshot) {
+
+				},
+				function(error){
+
+				},
+				function(){
+					var fileURL = upldTask.snapshot.downloadURL;
+					firebase.database().ref().child("subtitles").child(vid_id).once("value").then(function(snapshot){
+						firebase.database().ref("/subtitles/" + vid_id).update({"done" : 3, "srt_url": fileURL});
+					});
+				}
+			);
+		});
+		
+	});
 }
