@@ -50,30 +50,32 @@
 
 				var subDB = firebase.database().ref().child("subtitles");
 				var f_flag = true;
-			  	subDB.orderByChild("done").once("value").then(function(snapshot){
+			  	subDB.orderByChild("requested_time").once("value").then(function(snapshot){
 		  			snapshot.forEach(function(child){
 				  		var doneValue = child.child("done").val();
 						console.log(doneValue);
 				  		if (doneValue === 0) {
 				  			window.location = "generate_info.html";
-							  	return true;
+				  			f_flag = false;
+							return true;
 				  		}
 				  		else if (doneValue === 1){
 				  			window.location.href = "fix_info.html";
+				  			f_flag = false;
 				  			return true;
 				  		}
 				  		else if (doneValue === 2){
 				  			window.location.href = "verify_info.html";
+				  			f_flag = false;
 				  			return true;
 				  		}
 
-				  		else {
-				  			alert("FIX: No video left for creating subtitles. Check back later.");
-				  			window.location.href = "index.html";
-				  			return true;
-				  		}
 				  	});
 				}); 
+				if (!f_flag) {
+		  			alert("MangoSub: No video left for creating subtitles. Check back later.");
+		  			window.location.href = "index.html";
+				}
 			}
 			else {
 				// User is signed out.
